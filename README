@@ -21,4 +21,6 @@ after that you can just compile:
 
 If you built electron module and want to rebuild for node, simply:
 
-    npm run install
+    conan install --build=missing -o runtime=node
+
+    npm run rebuild
