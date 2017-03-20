@@ -9,7 +9,8 @@
     "postinstall": "npm run transpile",
     "compile": "cmake-js compile",
     "rebuild": "cmake-js rebuild",
-    "test": "mocha --reporter spec --recursive"
+    "test": "mocha --reporter spec --recursive",
+    "test_electron": "electron-mocha --recursive"
   },
   "author": "",
   "license": "",
