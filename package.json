@@ -1,0 +1,36 @@
+{
+  "name": "joystream-node",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "transpile": "babel lib -d dist",
+    "install": "conan install --build=missing && cmake-js compile",
+    "postinstall": "npm run transpile",
+    "compile": "cmake-js compile",
+    "rebuild": "cmake-js rebuild",
+    "test": "mocha --reporter spec --recursive"
+  },
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "bcoin": "git+https://git@github.com/rllola/bcoin.git#fix-electron",
+    "bindings": "^1.2.1",
+    "debug": "^2.6.1",
+    "rimraf": "^2.6.1",
+    "sha1": "^1.1.1",
+    "cmake-js": "^3.4.1",
+    "nan": "^2.5.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-transform-async-to-generator": "^6.22.0",
+    "babel-preset-es2015-node": "^6.1.1",
+    "mocha": "^2.2.5",
+    "electron-mocha": "^3.3.0"
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  }
+}
