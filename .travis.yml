@@ -3,8 +3,10 @@ node_js:
   - "node"
 addons:
   apt:
+    sources:
+      - george-edison55-precise-backports
     packages:
-    - cmake
+      - cmake
 before_install:
   - "pip install --user conan"
   - "conan remote add joystream https://conan.joystream.co:9300 True"
