@@ -1,6 +1,10 @@
 language: node_js
 node_js:
   - "node"
+addons:
+  apt:
+    packages:
+    - cmake
 before_install:
   - "pip install --user conan"
   - "conan remote add joystream https://conan.joystream.co:9300 True"
