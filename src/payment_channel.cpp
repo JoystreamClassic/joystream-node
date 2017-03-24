@@ -12,8 +12,8 @@ namespace node {
 namespace payment_channel {
 
   #define VALUE_KEY "value"
-  #define PAYOR_KEY "payor"
-  #define PAYEE_KEY "payee"
+  #define PAYOR_KEY "payorSk"
+  #define PAYEE_KEY "payeePk"
   #define LOCKTIME_KEY "locktime"
 
   NAN_MODULE_INIT(Init) {
@@ -50,7 +50,7 @@ namespace commitment {
     auto value = GET_VAL(obj, VALUE_KEY);
 
     if(!value->IsNumber()){
-      throw std::runtime_error("value key is not a Number");
+      throw std::runtime_error("value is not a Number");
     }
 
     int64_t outputValue = ToNative<int64_t>(value); // Number satoshi
@@ -62,7 +62,7 @@ namespace commitment {
     auto locktime = GET_VAL(obj, LOCKTIME_KEY);
 
     if(!locktime->IsNumber()){
-      throw std::runtime_error("locktime key is not a Number");
+      throw std::runtime_error("locktime is not a Number");
     }
 
     int32_t relativeLocktime = ToNative<int32_t>(locktime); // Number locktime counter;
@@ -70,13 +70,13 @@ namespace commitment {
       throw std::runtime_error("locktime value is negative");
     }
 
-    auto payor = GET_VAL(obj, PAYOR_KEY); // public_key
+    auto payorSk = GET_VAL(obj, PAYOR_KEY); // private_key
 
-    auto payee = GET_VAL(obj, PAYEE_KEY); // public_key
+    auto payeePk = GET_VAL(obj, PAYEE_KEY); // public_key
 
     return paymentchannel::Commitment(outputValue,
-                                      public_key::decode(payor),
-                                      public_key::decode(payee),
+                                      private_key::decode(payorSk).pk(),
+                                      public_key::decode(payeePk),
                                       //relative_locktime::decode(locktime)); //todo
                                       Coin::RelativeLockTime::fromTimeUnits(relativeLocktime));
   }
