@@ -16,30 +16,44 @@ npm install
 
 ## Build for electron
 
-Verify your electron version :
+To use the package in electron, first configure for electron:
+
+```
+$ conan install --build=missing -o runtime=electron -o runtime_version=1.4.11
+```
+
+or if you have electron installed globally and want to build for that version:
+
 ```
 $ electron -v
 v1.6.2
 ```
 
-To use the package in electron, run rebuild script with electron runtime otpions:
-
 ```
-$ conan install --build=missing -o runtime=electron
-$ npm run rebuild -- --runtime=electron --runtime-version=<YOUR-ELECTRON-VERSION>
+$ electron configure
 ```
 
-For example, current stable electron version `1.6.2`
+then run the rebuild script:
 
-After that you can just compile:
 ```
-$ npm run compile -- --runtime=electron --runtime-version=<YOUR-ELECTRON-VERSION>
+$ npm run rebuild
 ```
 
 ## Rebuild
 
-If you built electron module and want to rebuild for node, simply:
+When you want to build for a new runtime or runtime version you always need to reconfigure. For example to build for node after having build for electron:
 ```
-$ conan install --build=missing -o runtime=node
+$ conan install --build=missing -o runtime=node -o runtime_version=6.3.1
+```
+
+or
+
+```
+$ node configure
+```
+
+then rebuild:
+
+```
 $ npm run rebuild
 ```
