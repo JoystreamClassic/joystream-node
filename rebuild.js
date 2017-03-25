@@ -33,7 +33,7 @@ var bs = new BuildSystem(options)
 bs.rebuild().then(function(){
     // on windows with visual studio, .node files is produced in build/bin
     // instead of build/Release. copy it to where the bindings module can find it
-    fs.copy('build/bin/*.node', 'build/', function(err) {
+    fs.copy('build/bin/JoyStreamAddon.node', 'build/JoyStreamAddon.node', function(err) {
       process.exit()
     })
 
