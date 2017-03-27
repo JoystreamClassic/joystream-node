@@ -23,11 +23,7 @@ describe('TorrentPlugin', function(){
     let tp
 
     beforeEach(function(){
-        let status = createValidStatus()
-        let plugin = {start_downloading : function(){}}
-        let peers = new Map()
-        let infoHash = "12345"
-        tp = new TorrentPlugin(status, plugin, peers, infoHash)
+        tp = new TorrentPlugin(createValidStatus())
     })
 
     it('Is an EventEmitter', function(){
@@ -58,6 +54,12 @@ describe('TorrentPlugin', function(){
             assert.typeOf(TorrentPlugin.InvalidStateError, 'function')
             assert.typeOf(TorrentPlugin.NoSellersError, 'function')
             assert.typeOf(TorrentPlugin.NotEnoughSellersError, 'function')
+            assert.typeOf(TorrentPlugin.ValueError, 'function')
+            assert.typeOf(TorrentPlugin.PeerNotFoundError, 'function')
+            assert.typeOf(TorrentPlugin.PeerHasNoConnectionError, 'function')
+            assert.typeOf(TorrentPlugin.InvalidPeerInnerStateError, 'function')
+            assert.typeOf(TorrentPlugin.TermsMismatchError, 'function')
+            assert.typeOf(TorrentPlugin.TooManySellersError, 'function')
         })
     })
     describe('createOutputsAndDownloadInfoMap', function(){
@@ -101,6 +103,217 @@ describe('TorrentPlugin', function(){
                 tp.update(createValidStatus(buyerTerms))
                 tp._createOutputsAndDownloadInfoMap(new Map())
             }, TorrentPlugin.NotEnoughSellersError)
+        })
+
+        it('throws on invalid channel value', function(){
+            assert.throws(function(){
+                let buyerTerms = {
+                    minNumberOfSellers: 1
+                }
+
+                tp.update(createValidStatus(buyerTerms))
+
+                let channels = new Map()
+
+                channels.set(0, {
+                    value: 0
+                })
+
+                tp._createOutputsAndDownloadInfoMap(channels)
+            }, TorrentPlugin.ValueError)
+        })
+
+        it('throws on missing peer', function(){
+            assert.throws(function(){
+                let buyerTerms = {
+                    minNumberOfSellers: 1
+                }
+
+                tp.update(createValidStatus(buyerTerms))
+
+                let channels = new Map()
+
+                channels.set(0, {
+                    value: 5000
+                })
+
+                tp.peers = new Map()
+
+                tp._createOutputsAndDownloadInfoMap(channels)
+            }, TorrentPlugin.PeerNotFoundError)
+        })
+
+        it('throws on missing peer.connection', function(){
+            assert.throws(function(){
+                let buyerTerms = {
+                    minNumberOfSellers: 1
+                }
+
+                tp.update(createValidStatus(buyerTerms))
+
+                let channels = new Map()
+
+                channels.set(0, {
+                    value: 5000
+                })
+
+                tp.peers = new Map()
+                tp.peers.set(0, {
+                    connection: null
+                })
+                tp._createOutputsAndDownloadInfoMap(channels)
+            }, TorrentPlugin.PeerHasNoConnectionError)
+        })
+
+        it('throws on invalid peer.connection.innerState', function(){
+            assert.throws(function(){
+                let buyerTerms = {
+                    minNumberOfSellers: 1
+                }
+
+                tp.update(createValidStatus(buyerTerms))
+
+                let channels = new Map()
+
+                channels.set(0, {
+                    value: 5000
+                })
+
+                tp.peers = new Map()
+                tp.peers.set(0, {
+                    connection: {
+                        innterState: -1
+                    }
+                })
+                tp._createOutputsAndDownloadInfoMap(channels)
+            }, TorrentPlugin.InvalidPeerInnerStateError)
+        })
+
+        it('throws on terms mismatch', function(){
+            assert.throws(function(){
+                let buyerTerms = {
+                    maxPrice: 100,
+                    maxLock: 5,
+                    minNumberOfSellers: 1,
+                    maxContractFeePerKb: 20000
+                }
+
+                tp.update(createValidStatus(buyerTerms))
+
+                let channels = new Map()
+
+                channels.set(0, {
+                    value: 5000
+                })
+
+                tp.peers = new Map()
+
+                let peer = {connection: {announcedModeAndTermsFromPeer : {seller : {terms : {}}}}}
+
+                peer.connection.innerState = INNER_STATE.PreparingContract
+                peer.connection.announcedModeAndTermsFromPeer.seller.terms = {
+                    minPrice: 100,
+                    minLock: 5,
+                    maxNumberOfSellers: 1,
+                    minContractFeePerKb:50000
+                }
+
+                tp.peers.set(0, peer)
+                tp._createOutputsAndDownloadInfoMap(channels)
+            }, TorrentPlugin.TermsMismatchError)
+        })
+
+        it('throws on too many sellers', function(){
+            assert.throws(function(){
+                let buyerTerms = {
+                    maxPrice: 100,
+                    maxLock: 5,
+                    minNumberOfSellers: 1,
+                    maxContractFeePerKb: 20000
+                }
+
+                tp.update(createValidStatus(buyerTerms))
+
+                let channels = new Map()
+
+                tp.peers = new Map()
+
+                let peer = {connection: {announcedModeAndTermsFromPeer : {seller : {terms : {}}}}}
+
+                peer.connection.innerState = INNER_STATE.PreparingContract
+                peer.connection.announcedModeAndTermsFromPeer.seller.terms = {
+                    minPrice: 100,
+                    minLock: 5,
+                    maxNumberOfSellers: 1,
+                    minContractFeePerKb:20000
+                }
+
+                tp.peers.set(0, peer)
+                tp.peers.set(1, peer)
+
+                channels.set(0, {
+                    value: 5000
+                })
+
+                channels.set(1, {
+                    value: 5000
+                })
+
+                tp._createOutputsAndDownloadInfoMap(channels)
+            }, TorrentPlugin.TooManySellersError)
+        })
+
+        it('successfully creates downloadInfoMap', function(){
+            let buyerTerms = {
+                maxPrice: 100,
+                maxLock: 5,
+                minNumberOfSellers: 1,
+                maxContractFeePerKb: 20000
+            }
+
+            tp.update(createValidStatus(buyerTerms))
+
+            let channels = new Map()
+
+            tp.peers = new Map()
+
+            let peer = {connection: {announcedModeAndTermsFromPeer : {seller : {terms : {}}}}}
+
+            peer.connection.innerState = INNER_STATE.PreparingContract
+            peer.connection.announcedModeAndTermsFromPeer.seller.terms = {
+                minPrice: 100,
+                minLock: 5,
+                maxNumberOfSellers: 20,
+                minContractFeePerKb:15000
+            }
+            peer.connection.payor = {
+                sellerContractPk: Buffer.from('030589ee559348bd6a7325994f9c8eff12bd5d73cc683142bd0dd1a17abc99b0dc','hex')
+            }
+
+            tp.peers.set(0, peer)
+            tp.peers.set(1, peer)
+
+            channels.set(0, {
+                value: 5000,
+                buyerContractSk: Buffer.from('0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20', 'hex'),
+                buyerFinalPkHash: Buffer(20)
+            })
+
+            channels.set(1, {
+                value: 5000,
+                buyerContractSk: Buffer.from('0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20', 'hex'),
+                buyerFinalPkHash: Buffer(20)
+            })
+
+            let info = tp._createOutputsAndDownloadInfoMap(channels)
+
+            assert.isAtLeast(info.contractOutputs.length, 1)
+            assert.equal(info.contractOutputs.length, channels.size)
+            assert.isAtMost(info.contractFeeRate, 20000)
+            assert.equal(info.contractFeeRate, 15000)
+            assert.equal(info.downloadInfoMap.size, channels.size)
+            assert(info.downloadInfoMap.has(0))
+            assert(info.downloadInfoMap.has(1))
         })
     })
 })
