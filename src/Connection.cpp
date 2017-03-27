@@ -12,6 +12,7 @@
 #include "BuyerTerms.hpp"
 #include "OutPoint.hpp"
 #include "Signature.hpp"
+#include "PublicKey.hpp"
 
 namespace joystream {
 namespace node {

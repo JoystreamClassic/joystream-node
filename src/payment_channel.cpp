@@ -1,5 +1,7 @@
 #include "payment_channel.hpp"
 #include "PublicKey.hpp"
+#include "PrivateKey.hpp"
+#include <common/PrivateKey.hpp>
 
 #include "libtorrent-node/utils.hpp"
 #include "buffers.hpp"
@@ -75,7 +77,7 @@ namespace commitment {
     auto payeePk = GET_VAL(obj, PAYEE_KEY); // public_key
 
     return paymentchannel::Commitment(outputValue,
-                                      private_key::decode(payorSk).pk(),
+                                      private_key::decode(payorSk).toPublicKey(),
                                       public_key::decode(payeePk),
                                       //relative_locktime::decode(locktime)); //todo
                                       Coin::RelativeLockTime::fromTimeUnits(relativeLocktime));
