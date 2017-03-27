@@ -19,6 +19,52 @@ function createValidStatus(terms) {
     return status
 }
 
+function createValidState(){
+    let tp = new TorrentPlugin()
+
+    let buyerTerms = {
+        maxPrice: 100,
+        maxLock: 5,
+        minNumberOfSellers: 1,
+        maxContractFeePerKb: 20000
+    }
+
+    tp.update(createValidStatus(buyerTerms))
+
+    let channels = new Map()
+
+    tp.peers = new Map()
+
+    let peer = {connection: {announcedModeAndTermsFromPeer : {seller : {terms : {}}}}}
+
+    peer.connection.innerState = INNER_STATE.PreparingContract
+    peer.connection.announcedModeAndTermsFromPeer.seller.terms = {
+        minPrice: 100,
+        minLock: 5,
+        maxNumberOfSellers: 20,
+        minContractFeePerKb:15000
+    }
+    peer.connection.payor = {
+        sellerContractPk: Buffer.from('030589ee559348bd6a7325994f9c8eff12bd5d73cc683142bd0dd1a17abc99b0dc','hex')
+    }
+
+    tp.peers.set(0, peer)
+    tp.peers.set(1, peer)
+
+    channels.set(0, {
+        value: 5000,
+        buyerContractSk: Buffer.from('0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20', 'hex'),
+        buyerFinalPkHash: Buffer(20)
+    })
+
+    channels.set(1, {
+        value: 5000,
+        buyerContractSk: Buffer.from('0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20', 'hex'),
+        buyerFinalPkHash: Buffer(20)
+    })
+
+    return {tp, channels}
+}
 describe('TorrentPlugin', function(){
     let tp
 
@@ -264,46 +310,7 @@ describe('TorrentPlugin', function(){
         })
 
         it('successfully creates downloadInfoMap', function(){
-            let buyerTerms = {
-                maxPrice: 100,
-                maxLock: 5,
-                minNumberOfSellers: 1,
-                maxContractFeePerKb: 20000
-            }
-
-            tp.update(createValidStatus(buyerTerms))
-
-            let channels = new Map()
-
-            tp.peers = new Map()
-
-            let peer = {connection: {announcedModeAndTermsFromPeer : {seller : {terms : {}}}}}
-
-            peer.connection.innerState = INNER_STATE.PreparingContract
-            peer.connection.announcedModeAndTermsFromPeer.seller.terms = {
-                minPrice: 100,
-                minLock: 5,
-                maxNumberOfSellers: 20,
-                minContractFeePerKb:15000
-            }
-            peer.connection.payor = {
-                sellerContractPk: Buffer.from('030589ee559348bd6a7325994f9c8eff12bd5d73cc683142bd0dd1a17abc99b0dc','hex')
-            }
-
-            tp.peers.set(0, peer)
-            tp.peers.set(1, peer)
-
-            channels.set(0, {
-                value: 5000,
-                buyerContractSk: Buffer.from('0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20', 'hex'),
-                buyerFinalPkHash: Buffer(20)
-            })
-
-            channels.set(1, {
-                value: 5000,
-                buyerContractSk: Buffer.from('0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20', 'hex'),
-                buyerFinalPkHash: Buffer(20)
-            })
+            let {tp, channels} = createValidState()
 
             let info = tp._createOutputsAndDownloadInfoMap(channels)
 
@@ -314,6 +321,64 @@ describe('TorrentPlugin', function(){
             assert.equal(info.downloadInfoMap.size, channels.size)
             assert(info.downloadInfoMap.has(0))
             assert(info.downloadInfoMap.has(1))
+        })
+    })
+
+    describe('_createStartDownloadingInfo', function() {
+        it('returns rejected promise on invalid async signer callback', function(done){
+
+            tp._createOutputsAndDownloadInfoMap = sinon.spy()
+
+            let p = tp._createStartDownloadingInfo(null, null)
+
+            p.then(function(){
+                assert.fail()
+                done()
+            })
+            .catch(function(err){
+                assert.isTrue(err instanceof TorrentPlugin.InvalidArgumentError)
+                assert.isFalse(tp._createOutputsAndDownloadInfoMap.called)
+                done()
+            })
+        })
+
+        it('calls createOutputsAndDownloadInfoMap, and asyncSigner', function(done){
+
+            let outputs = [1,2]
+            let fee = 1000
+
+            let map = 'map'
+            let channels = 'channels'
+            let contract = 'contract'
+
+            tp._createOutputsAndDownloadInfoMap = sinon.spy(function(ch){
+                return {
+                    contractOutputs: outputs,
+                    contractFeeRate: fee,
+                    downloadInfoMap: map
+                }
+            })
+
+            let signer = sinon.spy(function(){
+                return new Promise(function(resolve, reject) {
+                    resolve(contract)
+                })
+            })
+
+            let p = tp._createStartDownloadingInfo(channels, signer)
+
+            p.then(function(info){
+                assert.isTrue(tp._createOutputsAndDownloadInfoMap.calledWith(channels))
+                assert.isTrue(signer.calledWith(outputs, fee))
+
+                assert.equal(info.contract, contract)
+                assert.equal(info.map, map)
+                done()
+            })
+            .catch(function(err){
+                assert.fail()
+                done()
+            })
         })
     })
 })
