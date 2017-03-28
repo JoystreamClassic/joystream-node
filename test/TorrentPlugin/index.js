@@ -65,6 +65,7 @@ function createValidState(){
 
     return {tp, channels}
 }
+
 describe('TorrentPlugin', function(){
     let tp
 
@@ -108,6 +109,7 @@ describe('TorrentPlugin', function(){
             assert.typeOf(TorrentPlugin.TooManySellersError, 'function')
         })
     })
+
     describe('createOutputsAndDownloadInfoMap', function(){
 
         it('throws if argument is not a Map()', function(){
@@ -324,7 +326,7 @@ describe('TorrentPlugin', function(){
         })
     })
 
-    describe('_createStartDownloadingInfo', function() {
+    describe('createStartDownloadingInfo', function() {
         it('returns rejected promise on invalid async signer callback', function(done){
 
             tp._createOutputsAndDownloadInfoMap = sinon.spy()
@@ -376,6 +378,45 @@ describe('TorrentPlugin', function(){
                 done()
             })
             .catch(function(err){
+                assert.fail()
+                done()
+            })
+        })
+    })
+
+    describe('start_downloading', function(done) {
+        it('calls plugin.start_downloading with info from createStartDownloadingInfo', function(done){
+            let tx = 'contract', map = 'map', infoHash='hash'
+
+            let createInfo = sinon.spy(function(channels){
+                return Promise.resolve({
+                    contract: tx,
+                    map: map
+                })
+            })
+
+            let pluginStartDownloading = sinon.spy(function(hash, tx, map, callback){
+                callback(null)
+            })
+
+            let tp = new TorrentPlugin(null, {start_downloading: pluginStartDownloading}, null, infoHash)
+
+            tp._createStartDownloadingInfo = createInfo
+
+            let channels = 'channels'
+            let signer = 'signer'
+            let p = tp.start_downloading(channels, signer)
+
+            p.then(function(signedTx){
+                assert.equal(signedTx, tx)
+                assert.isTrue(createInfo.calledWith(channels, signer))
+                assert.isTrue(pluginStartDownloading.called)
+                assert.equal(pluginStartDownloading.getCall(0).args[0], infoHash)
+                assert.equal(pluginStartDownloading.getCall(0).args[1], tx)
+                assert.equal(pluginStartDownloading.getCall(0).args[2], map)
+                done()
+            }).catch(function(err){
+                console.log(err)
                 assert.fail()
                 done()
             })
