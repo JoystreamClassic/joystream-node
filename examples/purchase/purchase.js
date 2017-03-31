@@ -16,7 +16,7 @@ var buyerSession = new Session({
 
 let addTorrentParamsBuyer = {
   ti: new TorrentInfo(sintelTorrentPath),
-  path: path.join(__dirname, '/buyer/')
+  savePath: path.join(__dirname, '/buyer/')
 }
 
 function letsBuy (torrent) {
@@ -34,8 +34,8 @@ function letsBuy (torrent) {
       torrent.on('readyToBuyTo', (seller) => {
         console.log('We are ready to buy')
         if (!seller.contractSent) {
-          let contractSk = Buffer.from('030589ee559348bd6a7325994f9c8eff12bd5d73cc683142bd0dd1a17abc99b0dc','hex')
-          let finalPkHash = new Buffer('b01d4cfef34c0811e776a4f374d68bf0ffdbba41', 'hex')
+          let contractSk = Buffer.from('0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20', 'hex')
+          let finalPkHash = new Buffer(20)
           let value = 5000
 
           seller.contractSent = true
@@ -85,10 +85,9 @@ function letsSell (torrent) {
     if (!err) {
       console.log('We are in sell mode')
       torrent.on('readyToSellTo', (buyer) => {
-        console.log('Ready to start selling')
         if (!buyer.contractSent) {
-          let contractSk = new Buffer('7f5f25d42b4e725a568c563aff60cf0c5cbbcb692d587c913961f38a08a342c5', 'hex')
-          let finalPkHash = new Buffer('b01d4cfef34c0811e776a4f374d68bf0ffdbba41', 'hex')
+          let contractSk = Buffer.from('030589ee559348bd6a7325994f9c8eff12bd5d73cc683142bd0dd1a17abc99b0','hex')
+          let finalPkHash = new Buffer(20)
 
           buyer.contractSent = true
 
@@ -145,11 +144,12 @@ sellerSession.addTorrent(addTorrentParamsSeller, (err, torrent) => {
 })
 
 buyerSession.addTorrent(addTorrentParamsBuyer, (err, torrent) => {
+  // TODO : Find a better way to do that.
   if (!err) {
     function waitingTorrentToDownload () {
       if (torrent.handle.status().state === 3) {
         torrent.removeListener('state_changed_alert', waitingTorrentToDownload)
-        letsSell(torrent)
+        letsBuy(torrent)
       }
     }
     if (torrent.torrentPlugin) {
