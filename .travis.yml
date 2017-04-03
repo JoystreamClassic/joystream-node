@@ -6,15 +6,10 @@ addons:
     sources:
       - george-edison55-precise-backports
     packages:
+      - gcc-4.8
+      - g++-4.8
       - cmake
       - cmake-data
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - gcc-4.8
-    - g++-4.8
-    - clang
 before_install:
   - "pip install --user conan"
   - "conan remote add joystream https://conan.joystream.co:9300 True"
