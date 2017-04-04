@@ -32,7 +32,7 @@ function getRuntimeAndVersion() {
             resolve({
                 runtime: 'node',
                 runtime_version: process.versions.node,
-                arch: process.arch,
+                arch: options.arch || process.arch,
                 debug: options.debug
             })
         }
@@ -55,6 +55,10 @@ function conanInstall(options) {
     //conan architecture setting
     if(options.arch) {
         args.push("-sarch=" + (mapping[options.arch] || options.arch))
+    }
+
+    if(options.debug) {
+        args.push("-sbuild_type=Debug")
     }
 
     return new Promise(function(resolve, reject){
