@@ -1,3 +1,4 @@
+/* global it, describe */
 var lib = require('../')
 var assert = require('assert')
 var _ = require('lodash')
