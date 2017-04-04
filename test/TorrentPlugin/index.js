@@ -36,7 +36,7 @@ function createValidState () {
 
   tp.peers = new Map()
 
-  let peer = {connection: {announcedModeAndTermsFromPeer: {seller: {terms: {}}}}}
+  let peer = {peerPlugin: {status: {connection: {announcedModeAndTermsFromPeer: {seller: {terms: {}}}}}}}
 
   peer.peerPlugin.status.connection.innerState = INNER_STATE.PreparingContract
   peer.peerPlugin.status.connection.announcedModeAndTermsFromPeer.seller.terms = {
@@ -49,16 +49,19 @@ function createValidState () {
     sellerContractPk: Buffer.from('030589ee559348bd6a7325994f9c8eff12bd5d73cc683142bd0dd1a17abc99b0dc', 'hex')
   }
 
-  tp.peers.set(0, peer)
-  tp.peers.set(1, peer)
+  let endpoint1 = {address: '0.0.0.0', key: 1234}
+  let endpoint2 = {address: '0.0.0.1', key: 1234}
 
-  channels.set(0, {
+  tp.peers.set('0.0.0.0:1234', peer)
+  tp.peers.set('0.0.0.1:1234', peer)
+
+  channels.set(endpoint1, {
     value: 5000,
     buyerContractSk: Buffer.from('0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20', 'hex'),
     buyerFinalPkHash: Buffer(20)
   })
 
-  channels.set(1, {
+  channels.set(endpoint2, {
     value: 5000,
     buyerContractSk: Buffer.from('0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20', 'hex'),
     buyerFinalPkHash: Buffer(20)
@@ -200,15 +203,17 @@ describe('TorrentPlugin', function () {
 
         let channels = new Map()
 
-        channels.set(0, {
+        let endpoint = {address: '0.0.0.0', key: 1234}
+
+        channels.set(endpoint, {
           value: 5000
         })
 
         tp.peers = new Map()
-        tp.peers.set(0, {
+        tp.peers.set('0.0.0.0:1234', {
           peerPlugin: {
             status: {
-              connection: null
+              connection: undefined
             }
           }
         })
@@ -225,23 +230,28 @@ describe('TorrentPlugin', function () {
         tp.update(createValidStatus(buyerTerms))
 
         let channels = new Map()
+        let endpoint = {address: '0.0.0.0', key: 1234}
 
-        channels.set(0, {
+        channels.set(endpoint, {
           value: 5000
         })
 
         tp.peers = new Map()
-        tp.peers.set(0, {
-          connection: {
-            innterState: -1
+        tp.peers.set('0.0.0.0:1234', {
+          peerPlugin: {
+            status: {
+              connection: {
+                innterState: -1
+              }
+            }
           }
         })
         tp._createOutputsAndDownloadInfoMap(channels)
       }, TorrentPlugin.InvalidPeerInnerStateError)
     })
 
-    it('throws on terms mismatch', function(){
-      assert.throws(function(){
+    it('throws on terms mismatch', function () {
+      assert.throws(function () {
         let buyerTerms = {
           maxPrice: 100,
           maxLock: 5,
@@ -252,24 +262,25 @@ describe('TorrentPlugin', function () {
         tp.update(createValidStatus(buyerTerms))
 
         let channels = new Map()
+        let endpoint = {address: '0.0.0.0', key: 1234}
 
-        channels.set(0, {
+        channels.set(endpoint, {
           value: 5000
         })
 
         tp.peers = new Map()
 
-        let peer = {connection: {announcedModeAndTermsFromPeer: {seller: {terms: {}}}}}
+        let peer = {peerPlugin: {status: {connection: {announcedModeAndTermsFromPeer: {seller: {terms: {}}}}}}}
 
-        peer.connection.innerState = INNER_STATE.PreparingContract
-        peer.connection.announcedModeAndTermsFromPeer.seller.terms = {
+        peer.peerPlugin.status.connection.innerState = INNER_STATE.PreparingContract
+        peer.peerPlugin.status.connection.announcedModeAndTermsFromPeer.seller.terms = {
           minPrice: 100,
           minLock: 5,
           maxNumberOfSellers: 1,
           minContractFeePerKb: 50000
         }
 
-        tp.peers.set(0, peer)
+        tp.peers.set('0.0.0.0:1234', peer)
         tp._createOutputsAndDownloadInfoMap(channels)
       }, TorrentPlugin.TermsMismatchError)
     })
@@ -289,24 +300,27 @@ describe('TorrentPlugin', function () {
 
         tp.peers = new Map()
 
-        let peer = {connection: {announcedModeAndTermsFromPeer : {seller : {terms : {}}}}}
+        let peer = {peerPlugin: {status: {connection: {announcedModeAndTermsFromPeer: {seller: {terms: {}}}}}}}
 
-        peer.connection.innerState = INNER_STATE.PreparingContract
-        peer.connection.announcedModeAndTermsFromPeer.seller.terms = {
+        peer.peerPlugin.status.connection.innerState = INNER_STATE.PreparingContract
+        peer.peerPlugin.status.connection.announcedModeAndTermsFromPeer.seller.terms = {
           minPrice: 100,
           minLock: 5,
           maxNumberOfSellers: 1,
-          minContractFeePerKb:20000
+          minContractFeePerKb: 20000
         }
 
-        tp.peers.set(0, peer)
-        tp.peers.set(1, peer)
+        tp.peers.set('0.0.0.0:1234', peer)
+        tp.peers.set('0.0.0.1:1234', peer)
 
-        channels.set(0, {
+        let endpoint1 = {address: '0.0.0.0', key: 1234}
+        let endpoint2 = {address: '0.0.0.1', key: 1234}
+
+        channels.set(endpoint1, {
           value: 5000
         })
 
-        channels.set(1, {
+        channels.set(endpoint2, {
           value: 5000
         })
 
@@ -324,8 +338,7 @@ describe('TorrentPlugin', function () {
       assert.isAtMost(info.contractFeeRate, 20000)
       assert.equal(info.contractFeeRate, 15000)
       assert.equal(info.downloadInfoMap.size, channels.size)
-      assert(info.downloadInfoMap.has(0))
-      assert(info.downloadInfoMap.has(1))
+      assert(info.downloadInfoMap.size === 2)
     })
   })
 
