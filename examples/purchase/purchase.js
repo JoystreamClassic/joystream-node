@@ -53,7 +53,7 @@ function letsBuy (torrent) {
               console.error(err)
             }
           }
-          torrent.startBuying(seller, contractSk, finalPkHash, value, asyncSign, callback)
+          torrent.startBuyingFromSeller(seller, contractSk, finalPkHash, value, asyncSign, callback)
         }
       })
     } else {
