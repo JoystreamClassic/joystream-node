@@ -7,6 +7,7 @@
 
 #include "TorrentPluginStatus.hpp"
 #include "libtorrent-node/utils.hpp"
+#include "libtorrent-node/sha1_hash.hpp"
 #include "Session.hpp"
 #include <extension/extension.hpp>
 
@@ -22,6 +23,7 @@ namespace torrent_plugin_status {
 
     v8::Local<v8::Object> o = Nan::New<v8::Object>();
     SET_VAL(o, "session", session::encode(t.session));
+    SET_VAL(o, "infoHash", libtorrent::node::sha1_hash::encode(t.infoHash));
     return o;
   }
 
