@@ -14,15 +14,46 @@ Install dependencies and build node module:
 npm install
 ```
 
-## To build module for a different target:
-```
-$ npm run build -- --runtime=node --runtime_version=6.3.1 --arch=ia32 --debug
-```
-
 ## Build for electron
 
-To use the package in electron, rebuild with electron options:
+To use the package in electron, first configure for electron:
 
 ```
-$ npm run build -- --runtime=electron --runtime_version=1.6.2
+$ conan install --build=missing -o runtime=electron -o runtime_version=1.4.11
+```
+
+or if you have electron installed globally and want to build for that version:
+
+```
+$ electron -v
+v1.6.2
+```
+
+```
+$ electron configure
+```
+
+then run the rebuild script:
+
+```
+$ npm run rebuild
+```
+
+## Rebuild
+
+When you want to build for a new runtime or runtime version you always need to reconfigure. For example to build for node after having build for electron:
+```
+$ conan install --build=missing -o runtime=node -o runtime_version=6.3.1
+```
+
+or
+
+```
+$ node configure
+```
+
+then rebuild:
+
+```
+$ npm run rebuild
 ```
