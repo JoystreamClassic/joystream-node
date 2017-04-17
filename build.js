@@ -7,6 +7,10 @@ var minimist = require('minimist')
 // Use a custom build folder for cmake-js to avoid conflict with node-gyp
 var CMAKEJS_BUILD_DIR = 'build-cmakejs'
 
+if(process.platform === 'win32') {
+  process.chdir('../');
+}
+
 function clean() {
     try {
         fs.unlinkSync('./conaninfo.txt')
