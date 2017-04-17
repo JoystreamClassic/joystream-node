@@ -9,6 +9,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories(${CMAKE_JS_INC})
 
+include_directories("../nan/")
+
 file(GLOB_RECURSE JOYSTREAM_SOURCE_FILES "src/*.cpp")
 
 add_library(JoyStreamAddon SHARED ${JOYSTREAM_SOURCE_FILES})
