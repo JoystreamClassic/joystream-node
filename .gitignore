@@ -1,4 +1,5 @@
 build
+build-cmakejs
 conan_imports_manifest.txt
 conanfile.pyc
 conaninfo*

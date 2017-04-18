@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "transpile": "babel lib -d dist",
-    "install": "npm run build",
     "postinstall": "postinstall-build dist \"npm run transpile\"",
-    "build": "node build.js",
     "test": "mocha --reporter spec --recursive",
     "test_electron": "electron-mocha --recursive"
   },

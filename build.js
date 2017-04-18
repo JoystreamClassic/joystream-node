@@ -3,45 +3,62 @@ var rimraf = require('rimraf')
 var BuildSystem = require('cmake-js').BuildSystem
 var spawn = require('child_process').spawn
 var minimist = require('minimist')
-var debug = require('debug')('JoyStreamAddon')
+
+// Use a custom build folder for cmake-js to avoid conflict with node-gyp
+var CMAKEJS_BUILD_DIR = 'build-cmakejs'
+
+if(process.platform === 'win32') {
+  process.chdir('../');
+}
 
 function clean() {
     try {
         fs.unlinkSync('./conaninfo.txt')
         fs.unlinkSync('./conanbuildinfo.cmake')
-        rimraf.sync('./build/')
+        rimraf.sync(CMAKEJS_BUILD_DIR)
     } catch(e){}
 }
 
 function getRuntimeAndVersion() {
-    // check command line args for runtime and runtime_version (both must be provided)
-    // arch and debug
-    // if not.. fallback to (process.versions.node)
     return new Promise(function(resolve, reject){
         var options = minimist(process.argv.slice(2),{boolean:true});
 
-        // build with user specified options if any option is specified
-        if(options.runtime || options.runtime_version) {
-            if(!options.runtime || !options.runtime_version) {
-                return reject('Error: runtime and runtime_version options must be specified together')
-            } else {
-                resolve(options)
-            }
-        } else {
-            // build for version and arch of node running npm script
-            resolve({
-                runtime: 'node',
-                runtime_version: process.versions.node,
-                arch: options.arch || process.arch,
-                debug: options.debug
-            })
+        if(!options.nodedir) {
+          return reject(new Error('use node-gyp to build'))
         }
 
+        // building for node runtime unless iojs appears in the nodedir path
+        // which indicates using dev headers for electron
+        options.runtime = options.nodedir.indexOf('iojs') === -1 ? 'node' : 'electron'
+
+        if(!options.target) {
+          if(options.runtime !== 'node') {
+            // if buliding for electron target (runtime version must be provided)
+            return reject(new Error('target not specified'))
+          }
+
+          options.runtime_version = process.versions.node
+        } else {
+          options.runtime_version = options.target
+        }
+
+        if(!options.arch) {
+          if(options.runtime !== 'node') {
+            // if building for electron architecture must be specified
+            return reject(new Error('arch not specified'))
+          }
+
+          options.arch = process.arch
+        }
+
+        options.debug = process.env.BUILDTYPE === 'Debug'
+
+        resolve(options)
     })
 }
 
 function conanInstall(options) {
-    debug('conan install with options:' + options)
+    console.log('conan install with options:', options)
 
     var args = ['install', '.', '--build=missing']
     args.push("-oruntime=" + options.runtime)
@@ -82,24 +99,25 @@ function rebuild(opts){
         runtime: opts.runtime,
         runtimeVersion: opts.runtime_version,
         arch: mapping[opts.arch] || opts.arch,
-        debug: opts.debug
+        debug: opts.debug,
+        out: CMAKEJS_BUILD_DIR
     }
 
-    debug('cmake-js rebuild with options: ' + options)
+    console.log('cmake-js rebuild with options:', options)
 
     // configure build system
     var bs = new BuildSystem(options)
 
     // rebuild() the addon instead of just compile(), to avoid issues when switching runtimes
     return bs.rebuild().then(function(){
-        if(process.platform !== 'win32') return
-        // on windows with visual studio, .node files is produced in build/bin
-        // instead of build/Release. copy it to where the bindings module can find it
-        try {
-            fs.copySync('build/bin/JoyStreamAddon.node', 'build/JoyStreamAddon.node')
-        } catch(e){}
+        // copy module from custom build location to build/ folder
+        if(process.platform == 'win32') {
+          // on windows with visual studio, .node files is produced in different locaiton
+          fs.copySync('build-cmakejs/bin/JoyStreamAddon.node', 'build/JoyStreamAddon.node')
+        } else {
+          fs.copySync('build-cmakejs/build-cmakejs/' + process.env.BUILDTYPE + '/JoyStreamAddon.node', 'build/JoyStreamAddon.node')
+        }
     })
-
 }
 
 clean()
