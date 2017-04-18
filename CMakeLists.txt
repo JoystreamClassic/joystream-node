@@ -9,6 +9,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories(${CMAKE_JS_INC})
 
+# cmake-js cannot find the nan headers when our package is installed
+# in parallel to it. This happens when pacakge is being installed as
+# a dependency as opposed to just running npm install inside the package
 include_directories("../nan/")
 
 file(GLOB_RECURSE JOYSTREAM_SOURCE_FILES "src/*.cpp")
