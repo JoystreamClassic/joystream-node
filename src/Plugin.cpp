@@ -19,6 +19,7 @@
 #include "libtorrent-node/add_torrent_params.hpp"
 #include "libtorrent-node/torrent_handle.h"
 #include "libtorrent-node/endpoint.hpp"
+#include "libtorrent-node/error_code.hpp"
 
 #include <extension/extension.hpp>
 
@@ -296,6 +297,11 @@ NAN_METHOD(Plugin::AddTorrent) {
 
   joystream::extension::request::AddTorrent::AddTorrentHandler addTorrentHandler = detail::CreateAddTorrentHandler(managedCallback);
 
+  // When this flag is set, attempting add a duplicate torrent to the session
+  // with add_torrent method will result in the error code `duplicate_torrent`
+  // being set in the add_torrent_alert
+  addTorrentParams.flags |= libtorrent::add_torrent_params::flag_duplicate_is_error;
+
   // Create request
   joystream::extension::request::AddTorrent request(addTorrentParams, addTorrentHandler);
 
@@ -428,8 +434,7 @@ namespace detail {
 
       if (ec) {
         v8::Local<v8::Value> argv[] = {
-          // Use error_code::encode(ec) when its ready
-          Nan::New("<convert error_code to string>").ToLocalChecked(),
+          libtorrent::node::error_code::encode(ec),
           Nan::Undefined()
         };
         safe_callback_dispatcher(callback, 2, argv);
