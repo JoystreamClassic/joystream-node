@@ -13,6 +13,7 @@
 #include "PubKeyHash.hpp"
 #include "Transaction.hpp"
 #include "StartDownloadConnectionInformation.hpp"
+#include "LibtorrentInteraction.hpp"
 #include "detail/UnhandledCallbackException.hpp"
 #include "libtorrent-node/utils.hpp"
 #include "libtorrent-node/sha1_hash.hpp"
@@ -84,6 +85,7 @@ NAN_MODULE_INIT(Plugin::Init) {
   Nan::SetPrototypeMethod(tpl, "resume_torrent", ResumeTorrent);
   Nan::SetPrototypeMethod(tpl, "start_downloading", StartDownloading);
   Nan::SetPrototypeMethod(tpl, "start_uploading", StartUploading);
+  Nan::SetPrototypeMethod(tpl, "set_libtorrent_interaction", SetLibtorrentInteraction);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("Plugin").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
@@ -406,6 +408,27 @@ NAN_METHOD(Plugin::StartUploading) {
                                                         contractKeyPair,
                                                         finalPkHash,
                                                         detail::subroutine_handler::CreateGenericHandler(managedCallback));
+
+    // Submit request
+    plugin->_plugin->submit(request);
+
+    RETURN_VOID
+}
+
+NAN_METHOD(Plugin::SetLibtorrentInteraction) {
+
+    // Get validated parameters
+    GET_THIS_PLUGIN(plugin)
+    ARGUMENTS_REQUIRE_DECODED(0, infoHash, libtorrent::sha1_hash, libtorrent::node::sha1_hash::decode)
+    ARGUMENTS_REQUIRE_DECODED(1, libtorrentInteraction,
+                              joystream::extension::TorrentPlugin::LibtorrentInteraction,
+                              joystream::node::libtorrent_interaction::decode)
+    ARGUMENTS_REQUIRE_CALLBACK(2, managedCallback)
+
+    // Create request
+    joystream::extension::request::SetLibtorrentInteraction request(infoHash,
+                                                                    libtorrentInteraction,
+                                                                    detail::subroutine_handler::CreateGenericHandler(managedCallback));
 
     // Submit request
     plugin->_plugin->submit(request);

@@ -12,7 +12,7 @@ namespace joystream {
 namespace node {
 namespace libtorrent_interaction {
 
-  #define SET_LIBTORRENT_INTERACTION(o, name) SET_VAL(o, #name, createValue(extension::TorrentPlugin::LibtorrentInteraction::name));
+  #define SET_LIBTORRENT_INTERACTION(o, name) SET_VAL(o, #name, encode(extension::TorrentPlugin::LibtorrentInteraction::name));
 
   NAN_MODULE_INIT(Init) {
 
@@ -26,7 +26,7 @@ namespace libtorrent_interaction {
     SET_VAL(target, "LibtorrentInteraction", object);
   }
 
-  v8::Local<v8::Value> createValue(extension::TorrentPlugin::LibtorrentInteraction interaction) {
+  v8::Local<v8::Value> encode(extension::TorrentPlugin::LibtorrentInteraction interaction) {
 
     switch(interaction) {
       case extension::TorrentPlugin::LibtorrentInteraction::None: return Nan::New(0);
@@ -39,7 +39,7 @@ namespace libtorrent_interaction {
 
   }
 
-  extension::TorrentPlugin::LibtorrentInteraction fromValue(const v8::Local<v8::Value> & v) {
+  extension::TorrentPlugin::LibtorrentInteraction decode(const v8::Local<v8::Value> & v) {
 
     uint32_t value = ToNative<uint32_t>(v);
 
