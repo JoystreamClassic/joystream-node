@@ -27,8 +27,8 @@ namespace libtorrent_interaction {
    * Encoding as Number
    */
 
-  v8::Local<v8::Value> createValue(extension::TorrentPlugin::LibtorrentInteraction interaction);
-  extension::TorrentPlugin::LibtorrentInteraction fromValue(const v8::Local<v8::Value> & v);
+  v8::Local<v8::Value> encode(extension::TorrentPlugin::LibtorrentInteraction interaction);
+  extension::TorrentPlugin::LibtorrentInteraction decode(const v8::Local<v8::Value> & v);
 
 }
 }

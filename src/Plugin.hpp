@@ -56,6 +56,7 @@ private:
   static NAN_METHOD(ResumeTorrent);
   static NAN_METHOD(StartDownloading);
   static NAN_METHOD(StartUploading);
+  static NAN_METHOD(SetLibtorrentInteraction);
 
 };
 
