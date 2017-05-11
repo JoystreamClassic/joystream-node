@@ -31,6 +31,7 @@ function letsBuy (torrent) {
   torrent.toBuyMode(buyerTerms, (err, result) => {
     if (!err) {
       console.log('We are in buying mode')
+      torrent.torrentPlugin.start()
       torrent.on('readyToBuyTo', (seller) => {
         console.log('We are ready to buy')
         if (!seller.contractSent) {
@@ -90,6 +91,7 @@ function letsSell (torrent) {
   torrent.toSellMode(sellerTerms, (err, result) => {
     if (!err) {
       console.log('We are in sell mode')
+      torrent.torrentPlugin.start()
       torrent.on('readyToSellTo', (buyer) => {
         if (!buyer.contractSent) {
           let contractSk = Buffer.from('030589ee559348bd6a7325994f9c8eff12bd5d73cc683142bd0dd1a17abc99b0', 'hex')
@@ -124,7 +126,7 @@ sellerSession.addTorrent(addTorrentParamsSeller, (err, torrent) => {
   if (!err) {
     function waitingTorrentToSeed () {
       if (torrent.handle.status().state === 5) {
-        torrent.removeListener('state_changed_alert', waitingTorrentToSeed)
+        torrent.removeListener('state_changed', waitingTorrentToSeed)
         letsSell(torrent)
       }
     }
@@ -132,7 +134,7 @@ sellerSession.addTorrent(addTorrentParamsSeller, (err, torrent) => {
       if (torrent.handle.status().state === 5) {
         letsSell(torrent)
       } else {
-        torrent.on('state_changed_alert', waitingTorrentToSeed)
+        torrent.on('state_changed', waitingTorrentToSeed)
       }
     } else {
       // we wait for the plugin to be added
@@ -140,7 +142,7 @@ sellerSession.addTorrent(addTorrentParamsSeller, (err, torrent) => {
         if (torrent.handle.status().state === 3) {
           letsSell(torrent)
         } else {
-          torrent.on('state_changed_alert', waitingTorrentToSeed)
+          torrent.on('state_changed', waitingTorrentToSeed)
         }
       })
     }
@@ -154,7 +156,7 @@ buyerSession.addTorrent(addTorrentParamsBuyer, (err, torrent) => {
   if (!err) {
     function waitingTorrentToDownload () {
       if (torrent.handle.status().state === 3) {
-        torrent.removeListener('state_changed_alert', waitingTorrentToDownload)
+        torrent.removeListener('state_changed', waitingTorrentToDownload)
         letsBuy(torrent)
       }
     }
@@ -162,7 +164,7 @@ buyerSession.addTorrent(addTorrentParamsBuyer, (err, torrent) => {
       if (torrent.handle.status().state === 3) {
         letsBuy(torrent)
       } else {
-        torrent.on('state_changed_alert', waitingTorrentToDownload)
+        torrent.on('state_changed', waitingTorrentToDownload)
       }
     } else {
       // we wait for the plugin to be added
@@ -170,7 +172,7 @@ buyerSession.addTorrent(addTorrentParamsBuyer, (err, torrent) => {
         if (torrent.handle.status().state === 3) {
           letsBuy(torrent)
         } else {
-          torrent.on('state_changed_alert', waitingTorrentToDownload)
+          torrent.on('state_changed', waitingTorrentToDownload)
         }
       })
     }
