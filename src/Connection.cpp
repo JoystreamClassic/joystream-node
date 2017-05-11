@@ -12,6 +12,7 @@
 #include "BuyerTerms.hpp"
 #include "OutPoint.hpp"
 #include "Signature.hpp"
+#include "PublicKey.hpp"
 
 namespace joystream {
 namespace node {
@@ -136,6 +137,7 @@ namespace connection {
     SET_NUMBER(o, "settlementFee", payor.settlementFee());
     SET_NUMBER(o, "refundLockTime", payor.refundLockTime().counter());
     SET_VAL(o, "anchor", outpoint::encode(payor.anchor()));
+    SET_VAL(o, "sellerContractPk", public_key::encode(payor.payeeContractPk()));
 
     return o;
   }
@@ -151,6 +153,7 @@ namespace connection {
     SET_NUMBER(o, "refundLockTime", payee.lockTime().counter());
     SET_VAL(o, "anchor", outpoint::encode(payee.contractOutPoint()));
     SET_VAL(o, "lastValidPayorPaymentSignature", signature::encode(payee.lastValidPayorPaymentSignature()));
+    SET_VAL(o, "buyerContractPk", public_key::encode(payee.payorContractPk()));
 
     return o;
   }

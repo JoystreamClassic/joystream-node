@@ -5,10 +5,7 @@
   "main": "index.js",
   "scripts": {
     "transpile": "babel lib -d dist",
-    "install": "conan install --build=missing && cmake-js compile",
-    "postinstall": "npm run transpile",
-    "compile": "cmake-js compile",
-    "rebuild": "cmake-js rebuild",
+    "postinstall": "postinstall-build dist \"npm run transpile\"",
     "test": "mocha --reporter spec --recursive",
     "test_electron": "electron-mocha --recursive"
   },
@@ -17,11 +14,15 @@
   "dependencies": {
     "bcoin": "git+https://git@github.com/rllola/bcoin.git#fix-electron",
     "bindings": "^1.2.1",
-    "debug": "^2.6.1",
-    "rimraf": "^2.6.1",
-    "sha1": "^1.1.1",
+    "bluebird": "^3.5.0",
     "cmake-js": "^3.4.1",
-    "nan": "^2.5.1"
+    "debug": "^2.6.1",
+    "fs-extra": "^2.1.2",
+    "minimist": "^1.2.0",
+    "nan": "^2.5.1",
+    "postinstall-build": "^2.1.3",
+    "rimraf": "^2.6.1",
+    "sha1": "^1.1.1"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
@@ -29,7 +30,9 @@
     "babel-plugin-transform-async-to-generator": "^6.22.0",
     "babel-preset-es2015-node": "^6.1.1",
     "mocha": "^2.2.5",
-    "electron-mocha": "^3.3.0"
+    "electron-mocha": "^3.3.0",
+    "chai": "^3.5.0",
+    "sinon": "^2.1.0"
   },
   "standard": {
     "parser": "babel-eslint"

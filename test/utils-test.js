@@ -1,3 +1,4 @@
+/* global it, describe */
 var utils = require('../dist/utils')
 var assert = require('assert')
 
