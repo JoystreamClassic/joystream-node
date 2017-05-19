@@ -44,6 +44,19 @@ describe('Session class', function () {
         assert(!err)
       })
     })
+    it('torrentsBySecondaryHash map updated', function () {
+      let addTorrentParams = {
+        infoHash: '6a9759bffd5c0af65319979fb7832189f4f3c35d',
+        name: 'sintel.mp4',
+        path: __dirname
+      }
+      var app = new lib.Session({
+        port: 6881
+      })
+      app.addTorrent(addTorrentParams, (err, torrent) => {
+        assert(this.torrentsBySecondaryHash.has(torrent.secondaryInfoHash))
+      })
+    })
   })
   describe('Removing torrent from plugin', function () {
     it('Remove torrent', function () {
@@ -77,6 +90,19 @@ describe('Session class', function () {
           assert(!app.torrents.get(infoHash))
         })
       })
+    })
+  })
+  it('torrentsBySecondaryHash map updated after removed', function () {
+    let addTorrentParams = {
+      infoHash: '6a9759bffd5c0af65319979fb7832189f4f3c35d',
+      name: 'sintel.mp4',
+      path: __dirname
+    }
+    var app = new lib.Session({
+      port: 6881
+    })
+    app.addTorrent(addTorrentParams, (err, torrent) => {
+      assert(!this.torrentsBySecondaryHash.has(torrent.secondaryInfoHash))
     })
   })
 })
