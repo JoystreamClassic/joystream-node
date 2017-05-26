@@ -60,10 +60,10 @@ function letsSell (torrent) {
 
     console.log('Found Suitable buyer', connection)
 
-    const endPoint = connection.endpoint
+    const pid = connection.pid
     const buyerTerms = connection.announcedModeAndTermsFromPeer.buyer.terms
 
-    torrent.startUploading(endPoint, buyerTerms, contractSk, finalPkHash, (err) => {
+    torrent.startUploading(pid, buyerTerms, contractSk, finalPkHash, (err) => {
       if (err) {
         console.log('Failed to start uploading to buyer', err)
         lookingForBuyer = true

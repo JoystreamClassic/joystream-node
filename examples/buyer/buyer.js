@@ -60,10 +60,10 @@ function letsBuy (torrent) {
     // Stop looking for seller
     lookingForSeller = false
 
-    const endPoint = connection.endpoint
+    const pid = connection.pid
     const sellerTerms = connection.announcedModeAndTermsFromPeer.seller.terms
 
-    let setup = makeContractAndDownloadInfoMap(endPoint, sellerTerms)
+    let setup = makeContractAndDownloadInfoMap(pid, sellerTerms)
 
     torrent.startDownloading(setup.contract, setup.map, function (err) {
       if (err) {
@@ -76,14 +76,14 @@ function letsBuy (torrent) {
   })
 }
 
-function makeContractAndDownloadInfoMap (endPoint, sellerTerms) {
+function makeContractAndDownloadInfoMap (pid, sellerTerms) {
   // Fake contract
   const contract = Buffer.from('01000000017b1eabe0209b1fe794124575ef807057c77ada2138ae4fa8d6c4de0398a14f3f00000000494830450221008949f0cb400094ad2b5eb399d59d01c14d73d8fe6e96df1a7150deb388ab8935022079656090d7f6bac4c9a94e0aad311a4268e082a725f8aeae0573fb12ff866a5f01ffffffff01f0ca052a010000001976a914cbc20a7664f2f69e5355aa427045bc15e7c6c77288ac00000000', 'hex')
 
   // Download info map for one seller
   const map = new Map()
 
-  map.set(endPoint, {
+  map.set(pid, {
     index: 0,
     value: 100000,
     sellerTerms: sellerTerms,
