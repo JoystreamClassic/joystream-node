@@ -44,12 +44,10 @@ let addTorrentParamsSeller = {
 sellerSession.addTorrent(addTorrentParamsSeller, (err, torrent) => {
   if (!err) {
     console.log('Torrent added to seller session')
-    const outOfDatePeerTime = 3000
-
     setInterval(() => {
-      torrent.refreshJoyStreamPeerList(outOfDatePeerTime)
-    }, outOfDatePeerTime)
-
+      sellerSession.dhtAnnounce(torrent.secondaryInfoHash)
+      sellerSession.dhtGetPeers(torrent.secondaryInfoHash)
+    }, 5000)
   } else {
     console.error(err)
   }
@@ -59,25 +57,11 @@ buyerSession.addTorrent(addTorrentParamsBuyer, (err, torrent) => {
   // TODO : Find a better way to do that.
   if (!err) {
     console.log('Torrent added to buyer session')
-    const outOfDatePeerTime = 3000
-
     setInterval(() => {
-      torrent.refreshJoyStreamPeerList(outOfDatePeerTime)
-    }, outOfDatePeerTime)
-
+      buyerSession.dhtAnnounce(torrent.secondaryInfoHash)
+      buyerSession.dhtGetPeers(torrent.secondaryInfoHash)
+    }, 5000)
   } else {
     console.error(err)
   }
 })
-
-setInterval(() => {
-  console.log('DHT announce')
-
-  for (var [secondaryInfoHash] of sellerSession.torrentsBySecondaryHash.entries()) {
-    sellerSession.dhtGetPeers(secondaryInfoHash)
-  }
-
-  for (var [secondaryInfoHash] of buyerSession.torrentsBySecondaryHash.entries()) {
-    buyerSession.dhtAnnounce(secondaryInfoHash)
-  }
-}, 1000)
