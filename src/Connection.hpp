@@ -89,7 +89,7 @@ namespace connection {
    * { see above } o.payor - payor side of payment channel (only valid on buyer side)
    * { see above } o.payee - payee side of payment channel (only valid on seller side)
    */
-  v8::Local<v8::Object> encode(const joystream::protocol_session::status::Connection<libtorrent::tcp::endpoint>& c);
+  v8::Local<v8::Object> encode(const joystream::protocol_session::status::Connection<libtorrent::peer_id>& c);
 
 }
 }

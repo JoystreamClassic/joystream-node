@@ -8,6 +8,7 @@
 #include "PeerPluginStatus.hpp"
 #include "libtorrent-node/utils.hpp"
 #include "libtorrent-node/endpoint.hpp"
+#include "libtorrent-node/peer_id.hpp"
 #include "BEPSupportStatus.hpp"
 #include "Connection.hpp"
 
@@ -24,6 +25,7 @@ v8::Local<v8::Object> encode(const extension::status::PeerPlugin & s) {
 
   v8::Local<v8::Object> o = Nan::New<v8::Object>();
 
+  SET_VAL(o, "pid", libtorrent::node::peer_id::encode(s.peerId));
   SET_VAL(o, "endPoint", libtorrent::node::endpoint::encode(s.endPoint));
   SET_VAL(o, "peerBEP10SupportStatus", bep_support_status::encode(s.peerBEP10SupportStatus));
   SET_VAL(o, "peerBitSwaprBEPSupportStatus", bep_support_status::encode(s.peerBitSwaprBEPSupportStatus));
