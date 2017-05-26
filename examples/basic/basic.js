@@ -5,7 +5,7 @@ const _ = require('lodash')
 console.log('====== Starting basic.js example ======')
 
 // start a joystream session
-var session = new Session()
+var session = new Session({port: 6881})
 
 let addTorrentParams = {
   ti: new TorrentInfo(__dirname + '/../../test/sintel.torrent'),
@@ -18,7 +18,7 @@ session.addTorrent(addTorrentParams, (err, torrent) => {
 
     console.log(torrent)
 
-    session.removeTorrent(torrent.handle.infoHash(), (err, result) => {
+    session.removeTorrent(torrent.infoHash, (err, result) => {
       if (!err) {
         console.log('====== Torrent Sintel Removed ======')
       } else {

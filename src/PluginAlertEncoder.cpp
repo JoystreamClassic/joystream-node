@@ -32,17 +32,14 @@ namespace PluginAlertEncoder {
   boost::optional<v8::Local<v8::Object>> alertEncoder(const libtorrent::alert *a) {
 
     #define ENCODE_PLUGIN_ALERT(name) if(joystream::extension::alert::name const * p = libtorrent::alert_cast<joystream::extension::alert::name>(a)) v = encode(p);
-    
+
     boost::optional<v8::Local<v8::Object>> v;
 
     ENCODE_PLUGIN_ALERT(RequestResult)
     else ENCODE_PLUGIN_ALERT(TorrentPluginStatusUpdateAlert)
     else ENCODE_PLUGIN_ALERT(PeerPluginStatusUpdateAlert)
-    else ENCODE_PLUGIN_ALERT(TorrentPluginAdded)
-    else ENCODE_PLUGIN_ALERT(TorrentPluginRemoved)
-    else ENCODE_PLUGIN_ALERT(PeerPluginAdded)
-    else ENCODE_PLUGIN_ALERT(PeerPluginRemoved)
     else ENCODE_PLUGIN_ALERT(ConnectionAddedToSession)
+    else ENCODE_PLUGIN_ALERT(ConnectionRemovedFromSession)
     else ENCODE_PLUGIN_ALERT(SessionStarted)
     else ENCODE_PLUGIN_ALERT(SessionPaused)
     else ENCODE_PLUGIN_ALERT(SessionStopped)
@@ -75,10 +72,6 @@ namespace PluginAlertEncoder {
     SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, RequestResult)
     SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, TorrentPluginStatusUpdateAlert)
     SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, PeerPluginStatusUpdateAlert)
-    SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, TorrentPluginAdded)
-    SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, TorrentPluginRemoved)
-    SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, PeerPluginAdded)
-    SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, PeerPluginRemoved)
     SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, ConnectionAddedToSession)
     SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, ConnectionRemovedFromSession)
     SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, SessionStarted)
@@ -137,30 +130,6 @@ namespace PluginAlertEncoder {
     SET_VAL(v, "statuses", statuses);
 
     return v;
-  }
-
-  v8::Local<v8::Object> encode(joystream::extension::alert::TorrentPluginAdded const * p) {
-    auto v = libtorrent::node::alert_types::encode(static_cast<libtorrent::torrent_alert const *>(p));
-
-    SET_VAL(v, "status", torrent_plugin_status::encode(p->status));
-
-    return v;
-  }
-
-  v8::Local<v8::Object> encode(joystream::extension::alert::TorrentPluginRemoved const * p) {
-    return libtorrent::node::alert_types::encode(static_cast<libtorrent::torrent_alert const *>(p));
-  }
-
-  v8::Local<v8::Object> encode(joystream::extension::alert::PeerPluginAdded const * p) {
-    auto v = libtorrent::node::alert_types::encode(static_cast<libtorrent::peer_alert const *>(p));
-
-    SET_VAL(v, "status", peer_plugin_status::encode(p->status));
-
-    return v;
-  }
-
-  v8::Local<v8::Object> encode(joystream::extension::alert::PeerPluginRemoved const * p) {
-    return libtorrent::node::alert_types::encode(static_cast<libtorrent::peer_alert const *>(p));
   }
 
   v8::Local<v8::Object> encode(joystream::extension::alert::ConnectionAddedToSession const * p) {
