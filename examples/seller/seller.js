@@ -28,8 +28,6 @@ function letsSell (torrent) {
     settlementFee: 5000
   }
 
-  let lookingForBuyer = false
-
   let contractSk = Buffer.from('030589ee559348bd6a7325994f9c8eff12bd5d73cc683142bd0dd1a17abc99b0', 'hex')
   let finalPkHash = new Buffer(20)
 
@@ -44,37 +42,42 @@ function letsSell (torrent) {
       }
 
       console.log('We are in sell mode')
-      lookingForBuyer = true
     })
   })
 
-  // Wait for one suitable buyer and start uploading
+  let buyers = new Map()
+
+  // start uploading to matching buyers
   torrent.on('peerPluginStatusUpdates', function (peerStatuses) {
-    if (!lookingForBuyer) return
+    console.log(peerStatuses.length, "connections")
+    let connections = pickSuitableBuyers(peerStatuses, sellerTerms)
 
-    let connection = pickSuitableBuyer(peerStatuses, sellerTerms)
+    if (!connections.length) return
 
-    if (!connection) return
+    connections.forEach((connection) => {
+      const pid = connection.pid
+      if (buyers.has(pid)) return
+      buyers.set(pid, true)
+      const buyerTerms = connection.announcedModeAndTermsFromPeer.buyer.terms
 
-    lookingForBuyer = false
-
-    console.log('Found Suitable buyer', connection)
-
-    const pid = connection.pid
-    const buyerTerms = connection.announcedModeAndTermsFromPeer.buyer.terms
-
-    torrent.startUploading(pid, buyerTerms, contractSk, finalPkHash, (err) => {
-      if (err) {
-        console.log('Failed to start uploading to buyer', err)
-        lookingForBuyer = true
-      } else {
-        console.log('Started Selling To Buyer', connection)
-      }
+      torrent.startUploading(pid, buyerTerms, contractSk, finalPkHash, (err) => {
+        if (err) {
+          console.log('Failed to start uploading to buyer', err)
+          buyers.delete(pid)
+        } else {
+          console.log('Started Selling To Buyer', connection)
+        }
+      })
     })
   })
+
+  // start uploading again to a peer if they leave
+  torrent.on('connectionRemoved', (pid) => buyers.delete(pid))
 }
 
-function pickSuitableBuyer (peerStatuses, sellerTerms) {
+function pickSuitableBuyers (peerStatuses, sellerTerms) {
+  var suitableBuyers = []
+
   for (var i in peerStatuses) {
     const status = peerStatuses[i]
 
@@ -86,13 +89,13 @@ function pickSuitableBuyer (peerStatuses, sellerTerms) {
     try {
       // lazy checking for buyer
       const buyerTerms = status.connection.announcedModeAndTermsFromPeer.buyer.terms
-      if(areTermsMatching(buyerTerms, sellerTerms)){
-        return status.connection
+      if (areTermsMatching(buyerTerms, sellerTerms)) {
+        suitableBuyers.push(status.connection)
       }
     } catch (e) {}
   }
 
-  return null
+  return suitableBuyers
 }
 
 sellerSession.addTorrent(addTorrentParamsSeller, (err, torrent) => {
