@@ -50,9 +50,9 @@ namespace session {
 
   v8::Local<v8::Uint32> encode(const protocol_session::BuyingState & state);
 
-  v8::Local<v8::Object> encode(const protocol_session::status::Buying<libtorrent::tcp::endpoint> & b);
+  v8::Local<v8::Object> encode(const protocol_session::status::Buying<libtorrent::peer_id> & b);
 
-  v8::Local<v8::Object> encode(const protocol_session::status::Session<libtorrent::tcp::endpoint> & s);
+  v8::Local<v8::Object> encode(const protocol_session::status::Session<libtorrent::peer_id> & s);
 
 }
 }

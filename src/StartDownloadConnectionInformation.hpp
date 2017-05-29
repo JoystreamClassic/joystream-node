@@ -10,6 +10,7 @@
 
 #include <protocol_session/protocol_session.hpp>
 #include <libtorrent/socket.hpp>
+#include <libtorrent/peer_id.hpp>
 
 #include <nan.h>
 
@@ -33,8 +34,8 @@ protocol_session::StartDownloadConnectionInformation decode(const v8::Local<v8::
 
 namespace PeerToStartDownloadInformationMap {
 
-//v8::Local<v8::Object> encode(const protocol_session::PeerToStartDownloadInformationMap<libtorrent::tcp::endpoint> & information);
-protocol_session::PeerToStartDownloadInformationMap<libtorrent::tcp::endpoint> decode(const v8::Local<v8::Value> & v);
+//v8::Local<v8::Object> encode(const protocol_session::PeerToStartDownloadInformationMap<libtorrent::peer_id> & information);
+protocol_session::PeerToStartDownloadInformationMap<libtorrent::peer_id> decode(const v8::Local<v8::Value> & v);
 
 }
 

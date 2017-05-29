@@ -11,6 +11,7 @@
 #include "PubKeyHash.hpp"
 #include <extension/Common.hpp> //std::hash<endpoint> specialization
 #include "libtorrent-node/endpoint.hpp"
+#include "libtorrent-node/peer_id.hpp"
 #include "libtorrent-node/utils.hpp"
 
 #define SELLER_TERMS_KEY "sellerTerms"
@@ -61,13 +62,13 @@ protocol_session::StartDownloadConnectionInformation decode(const v8::Local<v8::
 
 namespace PeerToStartDownloadInformationMap {
 
-//v8::Local<v8::Object> encode(const protocol_session::PeerToStartDownloadInformationMap<libtorrent::tcp::endpoint> & information) {
+//v8::Local<v8::Object> encode(const protocol_session::PeerToStartDownloadInformationMap<libtorrent::peer_id> & information) {
 //}
 
-protocol_session::PeerToStartDownloadInformationMap<libtorrent::tcp::endpoint> decode(const v8::Local<v8::Value> & v) {
+protocol_session::PeerToStartDownloadInformationMap<libtorrent::peer_id> decode(const v8::Local<v8::Value> & v) {
 
-  return std_lib_utils::decode<libtorrent::tcp::endpoint, protocol_session::StartDownloadConnectionInformation>(v,
-                                                                                                             &libtorrent::node::endpoint::decode,
+  return std_lib_utils::decode<libtorrent::peer_id, protocol_session::StartDownloadConnectionInformation>(v,
+                                                                                                             &libtorrent::node::peer_id::decode,
                                                                                                              &joystream::node::StartDownloadConnectionInformation::decode);
 }
 

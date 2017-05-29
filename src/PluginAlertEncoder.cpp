@@ -8,6 +8,7 @@
 #include "PluginAlertEncoder.hpp"
 #include "libtorrent-node/alert.hpp"
 #include "libtorrent-node/endpoint.hpp"
+#include "libtorrent-node/peer_id.hpp"
 #include "libtorrent-node/utils.hpp"
 #include "RequestResult.hpp"
 #include "TorrentPluginStatus.hpp"
@@ -267,7 +268,7 @@ namespace PluginAlertEncoder {
   v8::Local<v8::Object> encode(joystream::extension::alert::UploadStarted const * p) {
     auto v = libtorrent::node::alert_types::encode(static_cast<libtorrent::torrent_alert const *>(p));
 
-    SET_VAL(v, "endPoint", libtorrent::node::endpoint::encode(p->endPoint));
+    SET_VAL(v, "pid", libtorrent::node::peer_id::encode(p->peerId));
     SET_VAL(v, "terms", buyer_terms::encode(p->terms));
     SET_VAL(v, "contractPrivateKey", private_key::encode(p->contractKeyPair.sk()));
     SET_VAL(v, "finalPkHash", pubkey_hash::encode(p->finalPkHash));
@@ -295,7 +296,7 @@ namespace PluginAlertEncoder {
   v8::Local<v8::Object> encode(joystream::extension::alert::AnchorAnnounced const * p) {
     auto v = libtorrent::node::alert_types::encode(static_cast<libtorrent::torrent_alert const *>(p));
 
-    SET_VAL(v, "endPoint", libtorrent::node::endpoint::encode(p->_endPoint));
+    SET_VAL(v, "pid", libtorrent::node::peer_id::encode(p->_peerId));
     SET_NUMBER(v, "value", p->_value);
     SET_VAL(v, "outpoint", outpoint::encode(p->_anchor));
     SET_VAL(v, "contractPk", public_key::encode(p->_contractPk));
