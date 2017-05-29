@@ -44,13 +44,18 @@ let addTorrentParamsSeller = {
 sellerSession.addTorrent(addTorrentParamsSeller, (err, torrent) => {
   if (!err) {
     console.log('Torrent added to seller session')
+    torrent.on('dhtGetPeersReply', (peers) => {
+      for (var i in peers) {
+        console.log(peers[i])
+        torrent.connectPeer(peers[i])
+      }
+    })
   } else {
     console.error(err)
   }
 })
 
 /*buyerSession.addTorrent(addTorrentParamsBuyer, (err, torrent) => {
-  // TODO : Find a better way to do that.
   if (!err) {
     console.log('Torrent added to buyer session')
   } else {
