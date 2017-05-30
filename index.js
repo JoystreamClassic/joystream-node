@@ -7,20 +7,20 @@ module.exports = {
   LibtorrentInteraction: joystream.LibtorrentInteraction,
 
   // Connection State
-  InnerStateTypeInfo: joystream.InnerStateType,
+  ConnectionInnerState: joystream.InnerStateType,
 
   // Session Mode and State
-  SESSION_MODE: joystream.SessionMode,
-  SESSION_STATE: joystream.SessionState,
-  BUYING_STATE: joystream.BuyingState,
-  SELLING_STATE: joystream.SellingState,
+  SessionMode: joystream.SessionMode,
+  SessionState: joystream.SessionState,
+  BuyingState: joystream.BuyingState,
+  SellingState: joystream.SellingState,
 
   // Torrent State
-  TORRENT_STATE: libtorrent.TorrentState,
+  TorrentState: libtorrent.TorrentState,
 
   // Classes
   TorrentInfo: libtorrent.TorrentInfo,
-  Session,
+  Session: Session,
 
   // Payment channel, helper methods
   paymentChannel: {
