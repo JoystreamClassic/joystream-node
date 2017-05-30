@@ -4,7 +4,9 @@ const Session = require('../../').Session
 const TorrentInfo = require('../../').TorrentInfo
 const path = require('path')
 const areTermsMatching = require('../../lib/utils').areTermsMatching
-const InnerStateTypeInfo = require('bindings')('JoyStreamAddon').joystream.InnerStateType
+const ConnectionInnerState = require('../../').ConnectionInnerState
+const TorrentState = require('../../').TorrentState
+const LibtorrentInteraction = require('../../').LibtorrentInteraction
 
 const torrentPath = path.join(__dirname, '/../../test/sfc.torrent')
 const sintelTorrentPath = path.join(__dirname, '/../../test/sintel.torrent')
@@ -84,7 +86,7 @@ function pickSuitableBuyers (peerStatuses, sellerTerms) {
     if(!status.connection) continue
 
     // Buyer must have invited us
-    if(status.connection.innerState !== InnerStateTypeInfo.Invited) continue
+    if(status.connection.innerState !== ConnectionInnerState.Invited) continue
 
     try {
       // lazy checking for buyer
@@ -105,9 +107,9 @@ sellerSession.addTorrent(addTorrentParamsSeller, (err, torrent) => {
 
   console.log(torrent)
 
-  torrent.setLibtorrentInteraction(3)
+  torrent.setLibtorrentInteraction(LibtorrentInteraction.BlockUploadingAndDownloading)
 
-  waitForState(torrent, 5, function () {
+  waitForState(torrent, TorrentState.seeding, function () {
     letsSell(torrent)
   })
 })
