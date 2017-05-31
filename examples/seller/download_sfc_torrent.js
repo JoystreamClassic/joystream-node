@@ -3,6 +3,7 @@
 const Session = require('../../').Session
 const TorrentInfo = require('../../').TorrentInfo
 const path = require('path')
+const TorrentState = require('../../').TorrentState
 
 const sfcTorrentPath = path.join(__dirname, '/../../test/sfc.torrent')
 const sintelTorrentPath = path.join(__dirname, '/../../test/sintel.torrent')
@@ -25,11 +26,11 @@ session.addTorrent(addTorrentParams, (err, torrent) => {
   console.log(torrent)
 
   // Wait for libtorrent state to be downloading
-  waitForState(torrent, 3, function () {
+  waitForState(torrent, TorrentState.downloading, function () {
     console.log('downloading torrent...')
   })
 
-  waitForState(torrent, 5, function () {
+  waitForState(torrent, TorrentState.seeding, function () {
     console.log('finished downloading torrent')
     process.exit()
   })

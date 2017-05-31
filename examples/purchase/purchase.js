@@ -4,7 +4,9 @@ const Session = require('../../').Session
 const TorrentInfo = require('../../').TorrentInfo
 const path = require('path')
 const areTermsMatching = require('../../lib/utils').areTermsMatching
-const InnerStateTypeInfo = require('bindings')('JoyStreamAddon').joystream.InnerStateType
+const ConnectionInnerState = require('../../').ConnectionInnerState
+const TorrentState = require('../../').TorrentState
+const LibtorrentInteraction = require('../../').LibtorrentInteraction
 
 const sfcTorrentPath = path.join(__dirname, '/../../test/sfc.torrent')
 const sintelTorrentPath = path.join(__dirname, '/../../test/sintel.torrent')
@@ -60,10 +62,10 @@ function letsBuy (torrent) {
     // Stop looking for seller
     lookingForSeller = false
 
-    const endPoint = connection.endpoint
+    const pid = connection.pid
     const sellerTerms = connection.announcedModeAndTermsFromPeer.seller.terms
 
-    let setup = makeContractAndDownloadInfoMap(endPoint, sellerTerms)
+    let setup = makeContractAndDownloadInfoMap(pid, sellerTerms)
 
     torrent.startDownloading(setup.contract, setup.map, function (err) {
       if (err) {
@@ -76,14 +78,14 @@ function letsBuy (torrent) {
   })
 }
 
-function makeContractAndDownloadInfoMap (endPoint, sellerTerms) {
+function makeContractAndDownloadInfoMap (pid, sellerTerms) {
   // Fake contract
   const contract = Buffer.from('01000000017b1eabe0209b1fe794124575ef807057c77ada2138ae4fa8d6c4de0398a14f3f00000000494830450221008949f0cb400094ad2b5eb399d59d01c14d73d8fe6e96df1a7150deb388ab8935022079656090d7f6bac4c9a94e0aad311a4268e082a725f8aeae0573fb12ff866a5f01ffffffff01f0ca052a010000001976a914cbc20a7664f2f69e5355aa427045bc15e7c6c77288ac00000000', 'hex')
 
   // Download info map for one seller
   const map = new Map()
 
-  map.set(endPoint, {
+  map.set(pid, {
     index: 0,
     value: 100000,
     sellerTerms: sellerTerms,
@@ -103,7 +105,7 @@ function pickSuitableSeller (peerStatuses, buyerTerms) {
     //console.log(status.connection.announcedModeAndTermsFromPeer)
 
     // connection must be in PerparingContract state
-    if (status.connection.innerState !== InnerStateTypeInfo.PreparingContract) {
+    if (status.connection.innerState !== ConnectionInnerState.PreparingContract) {
       console.log('not in preparing contract status')
       continue
     }
@@ -129,16 +131,16 @@ buyerSession.addTorrent(addTorrentParamsBuyer, (err, torrent) => {
 
   console.log(torrent)
 
-  torrent.setLibtorrentInteraction(3)
+  torrent.setLibtorrentInteraction(LibtorrentInteraction.BlockUploadingAndDownloading)
 
   // Wait for libtorrent state to be downloading
-  waitForState(torrent, 3, function () {
+  waitForState(torrent, TorrentState.downloading, function () {
     letsBuy(torrent)
   })
 
   // Wait for libtorrent state to be seeding which means we already
   // have it and it doesn't make sense to try to buy it, or we completed downloading it
-  waitForState(torrent, 5, function () {
+  waitForState(torrent, TorrentState.seeding, function () {
     console.log('Torrent downloaded, exiting')
     process.exit()
   })
@@ -210,10 +212,10 @@ function letsSell (torrent) {
 
     console.log('Found Suitable buyer', connection)
 
-    const endPoint = connection.endpoint
+    const pid = connection.pid
     const buyerTerms = connection.announcedModeAndTermsFromPeer.buyer.terms
 
-    torrent.startUploading(endPoint, buyerTerms, contractSk, finalPkHash, (err) => {
+    torrent.startUploading(pid, buyerTerms, contractSk, finalPkHash, (err) => {
       if (err) {
         console.log('Failed to start uploading to buyer', err)
         lookingForBuyer = true
@@ -231,7 +233,7 @@ function pickSuitableBuyer (peerStatuses, sellerTerms) {
     if(!status.connection) continue
 
     // Buyer must have invited us
-    if(status.connection.innerState !== InnerStateTypeInfo.Invited) continue
+    if(status.connection.innerState !== ConnectionInnerState.Invited) continue
 
     try {
       // lazy checking for buyer
@@ -252,9 +254,9 @@ sellerSession.addTorrent(addTorrentParamsSeller, (err, torrent) => {
 
   console.log(torrent)
 
-  torrent.setLibtorrentInteraction(3)
+  torrent.setLibtorrentInteraction(LibtorrentInteraction.BlockUploadingAndDownloading)
 
-  waitForState(torrent, 5, function () {
+  waitForState(torrent, TorrentState.seeding, function () {
     letsSell(torrent)
   })
 })

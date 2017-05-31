@@ -4,7 +4,9 @@ const Session = require('../../').Session
 const TorrentInfo = require('../../').TorrentInfo
 const path = require('path')
 const areTermsMatching = require('../../lib/utils').areTermsMatching
-const InnerStateTypeInfo = require('bindings')('JoyStreamAddon').joystream.InnerStateType
+const ConnectionInnerState = require('../../').ConnectionInnerState
+const TorrentState = require('../../').TorrentState
+const LibtorrentInteraction = require('../../').LibtorrentInteraction
 
 const torrentPath = path.join(__dirname, '/../../test/sfc.torrent')
 const sintelTorrentPath = path.join(__dirname, '/../../test/sintel.torrent')
@@ -103,7 +105,7 @@ function pickSuitableSeller (peerStatuses, buyerTerms) {
     //console.log(status.connection.announcedModeAndTermsFromPeer)
 
     // connection must be in PerparingContract state
-    if (status.connection.innerState !== InnerStateTypeInfo.PreparingContract) {
+    if (status.connection.innerState !== ConnectionInnerState.PreparingContract) {
       console.log('not in preparing contract status')
       continue
     }
@@ -129,16 +131,16 @@ buyerSession.addTorrent(addTorrentParamsBuyer, (err, torrent) => {
 
   console.log(torrent)
 
-  torrent.setLibtorrentInteraction(3)
+  torrent.setLibtorrentInteraction(LibtorrentInteraction.BlockUploadingAndDownloading)
 
   // Wait for libtorrent state to be downloading
-  waitForState(torrent, 3, function () {
+  waitForState(torrent, TorrentState.downloading, function () {
     letsBuy(torrent)
   })
 
   // Wait for libtorrent state to be seeding which means we already
   // have it and it doesn't make sense to try to buy it, or we completed downloading it
-  waitForState(torrent, 5, function () {
+  waitForState(torrent, TorrentState.seeding, function () {
     console.log('Torrent downloaded, exiting')
     process.exit()
   })
