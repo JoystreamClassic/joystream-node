@@ -22,10 +22,15 @@ session.addTorrent(addTorrentParams, (err, torrent) => {
 
       var status = torrent.status()
 
-      if (status.state === 5 ) {
+      console.log(status)
+
+      if (status.state === 5 || status.state === 3) {
         var havePiece = torrent.handle.havePiece(0)
 
-        console.log(havePiece)
+        var torrentInfo = torrent.handle.torrentFile()
+        console.log(torrentInfo)
+        var fileStorage = torrentInfo.files()
+        console.log(fileStorage.fileName(0))
 
         if (havePiece) {
           console.log('asking for piece !')
