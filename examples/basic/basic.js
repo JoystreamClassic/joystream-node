@@ -18,6 +18,10 @@ session.addTorrent(addTorrentParams, (err, torrent) => {
 
     console.log(torrent)
 
+    torrent.on('pieceFinished', (pieceIndex) => {
+      console.log('WE HAVE PIECE : ', pieceIndex)
+    })
+
     torrent.on('state_changed', () => {
 
       var status = torrent.status()
@@ -28,13 +32,13 @@ session.addTorrent(addTorrentParams, (err, torrent) => {
         var havePiece = torrent.handle.havePiece(0)
 
         var torrentInfo = torrent.handle.torrentFile()
-        console.log(torrentInfo)
         var fileStorage = torrentInfo.files()
-        console.log(fileStorage.fileName(0))
 
         if (havePiece) {
           console.log('asking for piece !')
           torrent.handle.readPiece(0)
+        } else {
+          console.log('We dont have piece')
         }
       }
     })
