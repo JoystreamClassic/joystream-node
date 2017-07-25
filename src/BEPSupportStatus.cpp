@@ -27,15 +27,18 @@ namespace bep_support_status {
   }
 
   v8::Local<v8::Uint32> encode(extension::BEPSupportStatus status) {
-
-    #define BET_SUPPORT_CASE(name) case extension::BEPSupportStatus::name:  v = 0; break;
-
     uint32_t v = 0;
 
     switch(status) {
-      BET_SUPPORT_CASE(unknown)
-      BET_SUPPORT_CASE(supported)
-      BET_SUPPORT_CASE(not_supported)
+      case extension::BEPSupportStatus::unknown:
+         v = 0;
+         break;
+      case extension::BEPSupportStatus::supported:
+         v = 1;
+         break;
+      case extension::BEPSupportStatus::not_supported:
+         v = 2;
+         break;
     }
 
     return Nan::New<v8::Uint32>(v);
