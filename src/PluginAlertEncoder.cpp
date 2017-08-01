@@ -235,7 +235,12 @@ namespace PluginAlertEncoder {
   v8::Local<v8::Object> encode(joystream::extension::alert::LastPaymentReceived const * p) {
     auto v = libtorrent::node::alert_types::encode(static_cast<libtorrent::peer_alert const *>(p));
 
-    // do we need to encode the paymentchannel::Payee ?  p->payee
+    try {
+      // Try to generate the settlement transaction
+      SET_VAL(v, "settlementTx", transaction::encode(p->payee.lastPaymentTransaction()));
+    } catch (std::exception &e) {
+      // if funds did not cover payment
+    }
 
     return v;
   }
