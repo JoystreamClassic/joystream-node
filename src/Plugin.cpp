@@ -87,6 +87,7 @@ NAN_MODULE_INIT(Plugin::Init) {
   Nan::SetPrototypeMethod(tpl, "start_downloading", StartDownloading);
   Nan::SetPrototypeMethod(tpl, "start_uploading", StartUploading);
   Nan::SetPrototypeMethod(tpl, "set_libtorrent_interaction", SetLibtorrentInteraction);
+  Nan::SetPrototypeMethod(tpl, "dropPeer", DropPeer);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("Plugin").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
@@ -430,6 +431,26 @@ NAN_METHOD(Plugin::SetLibtorrentInteraction) {
     joystream::extension::request::SetLibtorrentInteraction request(infoHash,
                                                                     libtorrentInteraction,
                                                                     detail::subroutine_handler::CreateGenericHandler(managedCallback));
+
+    // Submit request
+    plugin->_plugin->submit(request);
+
+    RETURN_VOID
+}
+
+
+NAN_METHOD(Plugin::DropPeer) {
+
+    // Get validated parameters
+    GET_THIS_PLUGIN(plugin)
+    ARGUMENTS_REQUIRE_DECODED(0, infoHash, libtorrent::sha1_hash, libtorrent::node::sha1_hash::decode)
+    ARGUMENTS_REQUIRE_DECODED(1, peerId, libtorrent::peer_id, libtorrent::node::peer_id::decode)
+    ARGUMENTS_REQUIRE_CALLBACK(2, managedCallback)
+
+    // Create request
+    joystream::extension::request::DropPeer request(infoHash,
+                                                    peerId,
+                                                    detail::subroutine_handler::CreateGenericHandler(managedCallback));
 
     // Submit request
     plugin->_plugin->submit(request);

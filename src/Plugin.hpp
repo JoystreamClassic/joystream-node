@@ -57,6 +57,7 @@ private:
   static NAN_METHOD(StartDownloading);
   static NAN_METHOD(StartUploading);
   static NAN_METHOD(SetLibtorrentInteraction);
+  static NAN_METHOD(DropPeer);
 
 };
 
