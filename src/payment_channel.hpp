@@ -30,5 +30,13 @@ namespace commitment {
     paymentchannel::Commitment decode(const v8::Local<v8::Value>&);
 }
 
+namespace settlement {
+  /* @brief Constructs a payment channel settlement transaction
+   * @return raw transaction - node Buffer
+   * @throws Error if constructor of transaction fails
+   */
+  NAN_METHOD(CreateSettlementTransaction);
+}
+
 }}}
 #endif
