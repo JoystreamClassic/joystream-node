@@ -19,6 +19,11 @@ v8::Local<v8::Object> encode(const Coin::Signature & sig) {
     return UCharVectorToNodeBuffer(raw);
 }
 
+Coin::Signature decode(const v8::Local<v8::Value>& value) {
+  auto data = NodeBufferToUCharVector(value);
+  return Coin::Signature::fromRawDER(data);
+}
+
 }
 }
 }
