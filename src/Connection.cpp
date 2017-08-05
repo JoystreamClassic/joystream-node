@@ -14,6 +14,7 @@
 #include "OutPoint.hpp"
 #include "Signature.hpp"
 #include "PublicKey.hpp"
+#include "PubKeyHash.hpp"
 
 namespace joystream {
 namespace node {
@@ -155,6 +156,7 @@ namespace connection {
     SET_VAL(o, "anchor", outpoint::encode(payee.contractOutPoint()));
     SET_VAL(o, "lastValidPayorPaymentSignature", signature::encode(payee.lastValidPayorPaymentSignature()));
     SET_VAL(o, "buyerContractPk", public_key::encode(payee.payorContractPk()));
+    SET_VAL(o, "buyerFinalPkHash", pubkey_hash::encode(payee.payorFinalPkHash()));
 
     return o;
   }

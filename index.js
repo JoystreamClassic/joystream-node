@@ -24,6 +24,7 @@ module.exports = {
 
   // Payment channel, helper methods
   paymentChannel: {
-    commitmentToOutput: joystream.commitmentToOutput
+    commitmentToOutput: joystream.commitmentToOutput,
+    createSettlementTransaction: joystream.createSettlementTransaction
   }
 }
