@@ -18,13 +18,38 @@ session.addTorrent(addTorrentParams, (err, torrent) => {
 
     console.log(torrent)
 
-    session.removeTorrent(torrent.infoHash, (err, result) => {
+    torrent.on('pieceFinished', (pieceIndex) => {
+      console.log('WE HAVE PIECE : ', pieceIndex)
+    })
+
+    torrent.on('state_changed', () => {
+
+      var status = torrent.status()
+
+      console.log(status)
+
+      if (status.state === 5 || status.state === 3) {
+        var havePiece = torrent.handle.havePiece(0)
+
+        var torrentInfo = torrent.handle.torrentFile()
+        var fileStorage = torrentInfo.files()
+
+        if (havePiece) {
+          console.log('asking for piece !')
+          torrent.handle.readPiece(0)
+        } else {
+          console.log('We dont have piece')
+        }
+      }
+    })
+
+    /*session.removeTorrent(torrent.infoHash, (err, result) => {
       if (!err) {
         console.log('====== Torrent Sintel Removed ======')
       } else {
         console.error(err)
       }
-    })
+    })*/
   } else {
     console.error(err)
   }
