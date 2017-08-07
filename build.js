@@ -70,6 +70,11 @@ function conanInstall(options) {
     args.push("-oruntime=" + options.runtime)
     args.push("-oruntime_version=" + options.runtime_version)
 
+    if (process.platform === 'win32') {
+        args.push("-scompiler=Visual Studio")
+        args.push("-scompiler.runtime=MT")
+    }
+
     var mapping = {
         'x64' : 'x86_64',
         'ia32' : 'x86'

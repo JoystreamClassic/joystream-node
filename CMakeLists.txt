@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.2)
 
 project (JoyStreamAddon)
 
@@ -19,3 +19,8 @@ file(GLOB_RECURSE JOYSTREAM_SOURCE_FILES "src/*.cpp")
 add_library(JoyStreamAddon SHARED ${JOYSTREAM_SOURCE_FILES})
 set_target_properties(JoyStreamAddon PROPERTIES PREFIX "" SUFFIX ".node")
 target_link_libraries(JoyStreamAddon ${CONAN_LIBS} ${CMAKE_JS_LIB})
+
+IF(MSVC)
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+ENDIF(MSVC)
