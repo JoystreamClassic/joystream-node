@@ -1,6 +1,5 @@
 const Session = require('../../').Session
 const TorrentInfo = require('../../').TorrentInfo
-const _ = require('lodash')
 
 console.log('====== Starting basic.js example ======')
 
