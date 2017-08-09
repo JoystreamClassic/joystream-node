@@ -1,7 +1,6 @@
 /* global it, describe */
 var lib = require('../')
 var assert = require('assert')
-var _ = require('lodash')
 
 describe('Session class', function () {
   describe('Adding torrent to plugin', function () {
