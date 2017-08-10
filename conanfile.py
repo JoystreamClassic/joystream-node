@@ -18,15 +18,15 @@ class JoyStreamNodeNPMConan(ConanFile):
         self.options["LibtorrentNode"].runtime_version = self.options.runtime_version
 
         # Disable building following boost libraries
-        self.options["Boost"].without_graph=True
-        self.options["Boost"].without_graph_parallel=True
-        self.options["Boost"].without_signals=True
-        self.options["Boost"].without_type_erasure=True
-        self.options["Boost"].without_wave=True
-        self.options["Boost"].without_coroutine=True
-        self.options["Boost"].without_coroutine2=True
-        self.options["Boost"].without_exception=True
-        self.options["Boost"].without_locale=True
+        # self.options["Boost"].without_graph=True
+        # self.options["Boost"].without_graph_parallel=True
+        # self.options["Boost"].without_signals=True
+        # self.options["Boost"].without_type_erasure=True
+        # self.options["Boost"].without_wave=True
+        # self.options["Boost"].without_coroutine=True
+        # self.options["Boost"].without_coroutine2=True
+        # self.options["Boost"].without_exception=True
+        # self.options["Boost"].without_locale=True
         # self.options["Boost"].without_atomic=True
         # self.options["Boost"].without_container=True
         # self.options["Boost"].without_mpi=True
