@@ -12,7 +12,7 @@ class JoyStreamNode(ConanFile):
                 "ProtocolSession/0.1.1@joystream/stable",
                 "Extension/0.1.1@joystream/stable",
                 "Boost/1.60.0@lasote/stable",
-                "OpenSSL/1.0.2k@lasote/stable")
+                "OpenSSL/1.0.2j@lasote/stable")
 
     generators = "cmake"
 
