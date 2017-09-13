@@ -1,5 +1,5 @@
 dist: trusty
-sudo: true
+sudo: false
 language: node_js
 node_js:
   - "7"
@@ -14,6 +14,6 @@ addons:
       - cmake
       - cmake-data
 before_install:
-  - pip install conan
+  - if [ "$TRAVIS_OS_NAME" = osx ]; then pip install conan; else pip install --user conan; fi
   - "conan remote add joystream https://conan.joystream.co:9300 True"
   - "conan user travis -p trav444 -r=joystream"
