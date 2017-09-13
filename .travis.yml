@@ -1,7 +1,11 @@
-language: node_js
 dist: trusty
+sudo: true
+language: node_js
 node_js:
-  - "node"
+  - "7"
+os:
+  - osx
+  - linux
 addons:
   apt:
     sources:
@@ -10,6 +14,6 @@ addons:
       - cmake
       - cmake-data
 before_install:
-  - "pip install --user conan"
+  - pip install conan
   - "conan remote add joystream https://conan.joystream.co:9300 True"
   - "conan user travis -p trav444 -r=joystream"
