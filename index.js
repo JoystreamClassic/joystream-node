@@ -15,6 +15,9 @@ module.exports = {
   BuyingState: joystream.BuyingState,
   SellingState: joystream.SellingState,
 
+  // BEPSupport
+  BEPSupportStatus: joystream.BEPSupportStatus,
+
   // Torrent State
   TorrentState: libtorrent.TorrentState,
 
