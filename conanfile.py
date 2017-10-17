@@ -9,8 +9,8 @@ class JoyStreamNode(ConanFile):
                 "PaymentChannel/0.1.1@joystream/stable",
                 "ProtocolWire/0.1.1@joystream/stable",
                 "ProtocolStateMachine/0.1.1@joystream/stable",
-                "ProtocolSession/0.1.1@joystream/stable",
-                "Extension/0.1.3@joystream/stable",
+                "ProtocolSession/0.1.2@joystream/stable",
+                "Extension/0.1.4@joystream/stable",
                 "Boost/1.60.0@lasote/stable",
                 "OpenSSL/1.0.2j@lasote/stable")
 
