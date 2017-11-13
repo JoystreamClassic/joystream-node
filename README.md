@@ -1,5 +1,7 @@
 # JoyStream Node
 
+[![npm package](https://nodei.co/npm/joystream-node.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/joystream-node/)
+
 `joystream-node` is the core javascript library for the JoyStream payment protocol over BitTorrent.
 
 ```
