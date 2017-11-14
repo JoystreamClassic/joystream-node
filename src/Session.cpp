@@ -108,7 +108,7 @@ v8::Local<v8::Uint32> encode(const protocol_session::BuyingState & state) {
   return Nan::New<v8::Uint32>(v);
 }
 
-v8::Local<v8::Object> encode(const protocol_session::status::Buying<libtorrent::tcp::endpoint> & b) {
+v8::Local<v8::Object> encode(const protocol_session::status::Buying<libtorrent::peer_id> & b) {
 
   v8::Local<v8::Object> o = Nan::New<v8::Object>();
 
@@ -123,7 +123,7 @@ v8::Local<v8::Object> encode(const protocol_session::status::Buying<libtorrent::
   return o;
 }
 
-v8::Local<v8::Object> encode(const protocol_session::status::Session<libtorrent::tcp::endpoint> & s) {
+v8::Local<v8::Object> encode(const protocol_session::status::Session<libtorrent::peer_id> & s) {
 
   v8::Local<v8::Object> o = Nan::New<v8::Object>();
 

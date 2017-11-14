@@ -25,6 +25,8 @@ namespace signature {
      */
     v8::Local<v8::Object> encode(const Coin::Signature &);
 
+    Coin::Signature decode(const v8::Local<v8::Value>&);
+
 }
 }
 }

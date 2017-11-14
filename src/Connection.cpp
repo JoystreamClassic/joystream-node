@@ -8,11 +8,13 @@
 #include "Connection.hpp"
 #include "libtorrent-node/utils.hpp"
 #include "libtorrent-node/endpoint.hpp"
+#include "libtorrent-node/peer_id.hpp"
 #include "SellerTerms.hpp"
 #include "BuyerTerms.hpp"
 #include "OutPoint.hpp"
 #include "Signature.hpp"
 #include "PublicKey.hpp"
+#include "PubKeyHash.hpp"
 
 namespace joystream {
 namespace node {
@@ -154,15 +156,16 @@ namespace connection {
     SET_VAL(o, "anchor", outpoint::encode(payee.contractOutPoint()));
     SET_VAL(o, "lastValidPayorPaymentSignature", signature::encode(payee.lastValidPayorPaymentSignature()));
     SET_VAL(o, "buyerContractPk", public_key::encode(payee.payorContractPk()));
+    SET_VAL(o, "buyerFinalPkHash", pubkey_hash::encode(payee.payorFinalPkHash()));
 
     return o;
   }
 
-  v8::Local<v8::Object> encode(const joystream::protocol_session::status::Connection<libtorrent::tcp::endpoint>& c) {
+  v8::Local<v8::Object> encode(const joystream::protocol_session::status::Connection<libtorrent::peer_id>& c) {
 
     v8::Local<v8::Object> o = Nan::New<v8::Object>();
 
-    SET_VAL(o, "endpoint", libtorrent::node::endpoint::encode(c.connectionId));
+    SET_VAL(o, "pid", libtorrent::node::peer_id::encode(c.connectionId));
 
     // machine
     SET_VAL(o, "innerState", encode(c.machine.innerStateTypeIndex));

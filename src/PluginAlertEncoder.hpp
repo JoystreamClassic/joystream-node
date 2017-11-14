@@ -19,10 +19,6 @@ namespace alert {
   struct RequestResult;
   struct TorrentPluginStatusUpdateAlert;
   struct PeerPluginStatusUpdateAlert;
-  struct TorrentPluginAdded;
-  struct TorrentPluginRemoved;
-  struct PeerPluginAdded;
-  struct PeerPluginRemoved;
   struct ConnectionAddedToSession;
   struct ConnectionRemovedFromSession;
   struct SessionStarted;
@@ -57,10 +53,6 @@ namespace PluginAlertEncoder {
   v8::Local<v8::Object> encode(extension::alert::RequestResult const * p);
   v8::Local<v8::Object> encode(extension::alert::TorrentPluginStatusUpdateAlert const * p);
   v8::Local<v8::Object> encode(extension::alert::PeerPluginStatusUpdateAlert const * p);
-  v8::Local<v8::Object> encode(extension::alert::TorrentPluginAdded const * p);
-  v8::Local<v8::Object> encode(extension::alert::TorrentPluginRemoved const * p);
-  v8::Local<v8::Object> encode(extension::alert::PeerPluginAdded const * p);
-  v8::Local<v8::Object> encode(extension::alert::PeerPluginRemoved const * p);
   v8::Local<v8::Object> encode(extension::alert::ConnectionAddedToSession const * p);
   v8::Local<v8::Object> encode(extension::alert::ConnectionRemovedFromSession const * p);
   v8::Local<v8::Object> encode(extension::alert::SessionStarted const * p);

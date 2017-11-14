@@ -1,8 +1,19 @@
 from conans import ConanFile
 
-class JoyStreamNodeNPMConan(ConanFile):
+class JoyStreamNode(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    requires = "LibtorrentNode/1.1.1@joystream/stable", "Extension/0.1@joystream/stable"
+    requires = ("Libtorrent/1.1.1@joystream/stable",
+                "LibtorrentNode/0.0.6@joystream/stable",
+                "CoinCore/0.1.2@joystream/stable",
+                "Common/0.1.2@joystream/stable",
+                "PaymentChannel/0.1.2@joystream/stable",
+                "ProtocolWire/0.1.2@joystream/stable",
+                "ProtocolStateMachine/0.1.2@joystream/stable",
+                "ProtocolSession/0.1.4@joystream/stable",
+                "Extension/0.1.6@joystream/stable",
+                "Boost/1.60.0@lasote/stable",
+                "OpenSSL/1.0.2j@lasote/stable")
+
     generators = "cmake"
 
     options = {

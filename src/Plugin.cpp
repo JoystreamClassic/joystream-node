@@ -20,6 +20,7 @@
 #include "libtorrent-node/add_torrent_params.hpp"
 #include "libtorrent-node/torrent_handle.h"
 #include "libtorrent-node/endpoint.hpp"
+#include "libtorrent-node/peer_id.hpp"
 #include "libtorrent-node/error_code.hpp"
 
 #include <extension/extension.hpp>
@@ -86,6 +87,7 @@ NAN_MODULE_INIT(Plugin::Init) {
   Nan::SetPrototypeMethod(tpl, "start_downloading", StartDownloading);
   Nan::SetPrototypeMethod(tpl, "start_uploading", StartUploading);
   Nan::SetPrototypeMethod(tpl, "set_libtorrent_interaction", SetLibtorrentInteraction);
+  Nan::SetPrototypeMethod(tpl, "dropPeer", DropPeer);
 
   constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
   Nan::Set(target, Nan::New("Plugin").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
@@ -372,7 +374,7 @@ NAN_METHOD(Plugin::StartDownloading) {
   ARGUMENTS_REQUIRE_DECODED(1, contractTx, Coin::Transaction, joystream::node::transaction::decode)
   ARGUMENTS_REQUIRE_DECODED(2,
                             peerToStartDownloadInformationMap,
-                            protocol_session::PeerToStartDownloadInformationMap<libtorrent::tcp::endpoint>,
+                            protocol_session::PeerToStartDownloadInformationMap<libtorrent::peer_id>,
                             joystream::node::PeerToStartDownloadInformationMap::decode)
   ARGUMENTS_REQUIRE_CALLBACK(3, managedCallback)
 
@@ -393,7 +395,7 @@ NAN_METHOD(Plugin::StartUploading) {
   // Get validated parameters
   GET_THIS_PLUGIN(plugin)
   ARGUMENTS_REQUIRE_DECODED(0, infoHash, libtorrent::sha1_hash, libtorrent::node::sha1_hash::decode)
-  ARGUMENTS_REQUIRE_DECODED(1, endPoint, libtorrent::tcp::endpoint, libtorrent::node::endpoint::decode)
+  ARGUMENTS_REQUIRE_DECODED(1, peerId, libtorrent::peer_id, libtorrent::node::peer_id::decode)
   ARGUMENTS_REQUIRE_DECODED(2, buyerTerms, protocol_wire::BuyerTerms, joystream::node::buyer_terms::decode)
   ARGUMENTS_REQUIRE_DECODED(3, contractSk, Coin::PrivateKey, joystream::node::private_key::decode)
   ARGUMENTS_REQUIRE_DECODED(4, finalPkHash, Coin::PubKeyHash, joystream::node::pubkey_hash::decode)
@@ -403,7 +405,7 @@ NAN_METHOD(Plugin::StartUploading) {
 
   // Create request
   joystream::extension::request::StartUploading request(infoHash,
-                                                        endPoint,
+                                                        peerId,
                                                         buyerTerms,
                                                         contractKeyPair,
                                                         finalPkHash,
@@ -429,6 +431,26 @@ NAN_METHOD(Plugin::SetLibtorrentInteraction) {
     joystream::extension::request::SetLibtorrentInteraction request(infoHash,
                                                                     libtorrentInteraction,
                                                                     detail::subroutine_handler::CreateGenericHandler(managedCallback));
+
+    // Submit request
+    plugin->_plugin->submit(request);
+
+    RETURN_VOID
+}
+
+
+NAN_METHOD(Plugin::DropPeer) {
+
+    // Get validated parameters
+    GET_THIS_PLUGIN(plugin)
+    ARGUMENTS_REQUIRE_DECODED(0, infoHash, libtorrent::sha1_hash, libtorrent::node::sha1_hash::decode)
+    ARGUMENTS_REQUIRE_DECODED(1, peerId, libtorrent::peer_id, libtorrent::node::peer_id::decode)
+    ARGUMENTS_REQUIRE_CALLBACK(2, managedCallback)
+
+    // Create request
+    joystream::extension::request::DropPeer request(infoHash,
+                                                    peerId,
+                                                    detail::subroutine_handler::CreateGenericHandler(managedCallback));
 
     // Submit request
     plugin->_plugin->submit(request);
