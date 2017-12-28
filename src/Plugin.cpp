@@ -15,6 +15,7 @@
 #include "StartDownloadConnectionInformation.hpp"
 #include "LibtorrentInteraction.hpp"
 #include "detail/UnhandledCallbackException.hpp"
+#include "Network.hpp"
 #include "libtorrent-node/utils.hpp"
 #include "libtorrent-node/sha1_hash.hpp"
 #include "libtorrent-node/add_torrent_params.hpp"
@@ -111,7 +112,7 @@ NAN_METHOD(Plugin::New) {
   ARGUMENTS_REQUIRE_NUMBER(0, minimumMessageId)
 
   // Create plugin
-  Plugin * p = new Plugin(boost::make_shared<extension::Plugin>(minimumMessageId));
+  Plugin * p = new Plugin(boost::make_shared<extension::Plugin>(minimumMessageId, USE_COIN_NETWORK));
 
   // Wrap p in this
   p->Wrap(info.This());

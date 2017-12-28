@@ -5,6 +5,7 @@
 #include "Signature.hpp"
 #include "OutPoint.hpp"
 #include "Transaction.hpp"
+#include "Network.hpp"
 
 #include <common/PrivateKey.hpp>
 #include <common/KeyPair.hpp>
@@ -123,7 +124,8 @@ namespace settlement {
                                 payeeFinalPkHash,
                                 payorContractPk,
                                 payorFinalPkHash,
-                                lastValidPayorPaymentSignature);
+                                lastValidPayorPaymentSignature,
+                                USE_COIN_NETWORK);
 
     try {
 
