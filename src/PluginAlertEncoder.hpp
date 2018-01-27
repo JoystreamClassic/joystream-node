@@ -41,6 +41,7 @@ namespace alert {
   struct SendingPieceToBuyer;
   struct PieceRequestedByBuyer;
   struct AnchorAnnounced;
+  struct AllSellersGone;
 }
 }
 namespace node {
@@ -75,6 +76,7 @@ namespace PluginAlertEncoder {
   v8::Local<v8::Object> encode(extension::alert::SendingPieceToBuyer const * p);
   v8::Local<v8::Object> encode(extension::alert::PieceRequestedByBuyer const * p);
   v8::Local<v8::Object> encode(extension::alert::AnchorAnnounced const * p);
+  v8::Local<v8::Object> encode(extension::alert::AllSellersGone const * p);
 
 }
 }

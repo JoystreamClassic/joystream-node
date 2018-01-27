@@ -61,6 +61,7 @@ namespace PluginAlertEncoder {
     else ENCODE_PLUGIN_ALERT(SendingPieceToBuyer)
     else ENCODE_PLUGIN_ALERT(PieceRequestedByBuyer)
     else ENCODE_PLUGIN_ALERT(AnchorAnnounced)
+    else ENCODE_PLUGIN_ALERT(AllSellersGone)
 
     return v;
   }
@@ -95,6 +96,7 @@ namespace PluginAlertEncoder {
     SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, SendingPieceToBuyer)
     SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, PieceRequestedByBuyer)
     SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, AnchorAnnounced)
+    SET_JOYSTREAM_PLUGIN_ALERT_TYPE(object, AllSellersGone)
 
     SET_VAL(target, "AlertType", object);
 
@@ -310,6 +312,11 @@ namespace PluginAlertEncoder {
     return v;
   }
 
+  v8::Local<v8::Object> encode(joystream::extension::alert::AllSellersGone const * p) {
+    auto v = libtorrent::node::alert_types::encode(static_cast<libtorrent::torrent_alert const *>(p));
+
+    return v;
+  }
 }
 }
 }
