@@ -101,7 +101,7 @@ describe('Session class', function () {
       port: 6881
     })
     app.addTorrent(addTorrentParams, (err, torrent) => {
-      assert(!this.torrentsBySecondaryHash.has(torrent.secondaryInfoHash))
+      assert(!app.torrentsBySecondaryHash.has(torrent.secondaryInfoHash))
     })
   })
 })
