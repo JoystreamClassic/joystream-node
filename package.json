@@ -1,13 +1,17 @@
 {
   "name": "joystream-node",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "JoyStream payment protocol over BitTorrent",
-  "keywords": ["libtorrent", "bitcoin", "micropayment"],
+  "keywords": [
+    "libtorrent",
+    "bitcoin",
+    "micropayment"
+  ],
   "homepage": "https://github.com/JoyStream/joystream-node",
   "bugs": "https://github.com/JoyStream/joystream-node/issues",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/JoyStream/joystream-node"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JoyStream/joystream-node"
   },
   "main": "index.js",
   "scripts": {
