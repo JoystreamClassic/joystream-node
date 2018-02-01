@@ -47,6 +47,10 @@ function letsBuy (torrent) {
     })
   })
 
+  torrent.on('allSellersGone', function() {
+    lookingForSeller = true
+  })
+
   // Wait for one suitable seller and start downloading
   torrent.on('peerPluginStatusUpdates', function (peerStatuses) {
     if (!lookingForSeller) return

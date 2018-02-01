@@ -7,3 +7,4 @@ conanbuildinfo*
 node_modules/
 dist/
 joystream.log
+bin/
