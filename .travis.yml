@@ -1,11 +1,17 @@
-dist: trusty
-sudo: false
 language: node_js
+
 node_js:
   - "7"
-os:
-  - osx
-  - linux
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: false
+    - os: osx
+      osx_image: xcode7.3
+      sudo: false
+
 addons:
   apt:
     sources:
@@ -13,6 +19,34 @@ addons:
     packages:
       - cmake
       - cmake-data
+  apt:
+    packages:
+    - fakeroot
+
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = osx ]; then pip install conan; else pip install --user conan; fi
-  - "conan remote add joystream https://api.bintray.com/conan/joystream/joystream True"
+  - if [[ "$TRAVIS_OS_NAME" = osx ]]; then
+      rvm install ruby-2.3.3;
+      rvm --default use 2.3.3;
+      ruby --version;
+      brew update;
+      brew upgrade python;
+      export PATH="/usr/local/opt/python/libexec/bin:$PATH";
+      export PYTHONPATH=`brew --prefix`/lib/python2.7/site-packages:$PYTHONPATH;
+      pip install --upgrade pip setuptools;
+    fi
+  # Install conan
+  - if [ "$TRAVIS_OS_NAME" = osx ]; then
+      pip install "conan==0.28.1";
+      pip uninstall pyopenssl;
+      pip uninstall cryptography;
+      pip install "pyopenssl>=16.0.0, <17.0.0";
+    else
+      pip install --user "conan==0.28.1";
+    fi
+  - conan remote add joystream https://api.bintray.com/conan/joystream/joystream True
+
+install:
+
+script:
+  - npm install
+  - npm test
