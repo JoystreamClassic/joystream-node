@@ -1,0 +1,28 @@
+platform:
+  - x64
+
+environment:
+  # Node version
+  nodejs_version: "7"
+
+init:
+  - git config --global core.autocrlf input
+
+install:
+  - ps: Install-Product node $env:nodejs_version $env:platform
+  # use npm@4.6.1 due to issues between npm5 and postinstall-build module behaviour
+  # https://github.com/exogen/postinstall-build/issues/29
+  - npm install -g npm@4.6.1
+  - npm config set loglevel warn
+  - pip install "conan==0.28.1"
+  - conan remote add joystream https://api.bintray.com/conan/joystream/joystream True
+
+build_script:
+  - npm install
+
+deploy_script:
+
+test: on
+
+test_script:
+  npm test

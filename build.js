@@ -11,12 +11,21 @@ if(process.platform === 'win32') {
   process.chdir('../');
 }
 
-function clean() {
+function clean () {
+    function remove (path) {
+      if (!fs.existsSync(path)) return
+      try {
+        fs.unlinkSync(path)
+      } catch (e) {}
+    }
+
+    remove('./conaninfo.txt')
+    remove('./conanbuildinfo.cmake')
+    remove('./conanbuildinfo.txt')
+
     try {
-        fs.unlinkSync('./conaninfo.txt')
-        fs.unlinkSync('./conanbuildinfo.cmake')
-        rimraf.sync(CMAKEJS_BUILD_DIR)
-    } catch(e){}
+      rimraf.sync(CMAKEJS_BUILD_DIR)
+    } catch (e) {}
 }
 
 function getRuntimeAndVersion() {
@@ -132,6 +141,7 @@ function rebuild(opts){
 }
 
 clean()
+
 getRuntimeAndVersion()
   .then(conanInstall)
   .then(rebuild)
