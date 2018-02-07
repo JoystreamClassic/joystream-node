@@ -10,6 +10,9 @@ if (linked !== expected) {
 }
 
 module.exports = {
+  // Connection Statemachine Protocol major version
+  protocolVersion: joystream.protocolVersion,
+
   // Libtorrent Interaction mode
   LibtorrentInteraction: joystream.LibtorrentInteraction,
 
