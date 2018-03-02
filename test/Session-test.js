@@ -33,7 +33,8 @@ describe('Session', function () {
 
   before(function () {
     session = new lib.Session({
-      port: 6881
+      port: 6881,
+      network: 'testnet3'
     })
   })
 
