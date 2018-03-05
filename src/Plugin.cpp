@@ -15,6 +15,7 @@
 #include "StartDownloadConnectionInformation.hpp"
 #include "LibtorrentInteraction.hpp"
 #include "detail/UnhandledCallbackException.hpp"
+#include "Network.hpp"
 #include "libtorrent-node/utils.hpp"
 #include "libtorrent-node/sha1_hash.hpp"
 #include "libtorrent-node/add_torrent_params.hpp"
@@ -109,9 +110,10 @@ NAN_METHOD(Plugin::New) {
 
   NEW_OPERATOR_GUARD(info, constructor)
   ARGUMENTS_REQUIRE_NUMBER(0, minimumMessageId)
+  ARGUMENTS_REQUIRE_DECODED(1, network, Coin::Network, joystream::node::network::decode);
 
   // Create plugin
-  Plugin * p = new Plugin(boost::make_shared<extension::Plugin>(minimumMessageId));
+  Plugin * p = new Plugin(boost::make_shared<extension::Plugin>(minimumMessageId, network));
 
   // Wrap p in this
   p->Wrap(info.This());
