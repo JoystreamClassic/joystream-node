@@ -17,6 +17,12 @@ namespace session {
 
 NAN_MODULE_INIT(Init) {
 
+  {
+    auto majorVersion = protocol_statemachine::CBStateMachine::protocolVersion.major();
+    v8::Local<v8::Number> version = Nan::New<v8::Number>(majorVersion);
+    SET_VAL(target, "protocolVersion", version);
+  }
+
   // protocol_session::SessionMode
   {
     #define SET_SESSION_MODE(o, name) SET_VAL(o, #name, encode(protocol_session::SessionMode::name))
