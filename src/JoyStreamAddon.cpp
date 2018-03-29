@@ -11,12 +11,10 @@
 #include <iostream>
 #include <fstream>
 
-NAN_MODULE_INIT(InitJoyStreamAddon) {
-    // redirect std::clog output to logfile
-    auto logfile = new std::ofstream("joystream.log");
-    std::clog.rdbuf(logfile->rdbuf());
+void redirectStdCLog();
 
-    std::clog << "Loading JoyStream Addon" << std::endl;
+NAN_MODULE_INIT(InitJoyStreamAddon) {
+    redirectStdCLog();
 
     v8::Local<v8::Object> libtorrent = Nan::New<v8::Object>();
     libtorrent::node::Init(libtorrent);
@@ -28,3 +26,25 @@ NAN_MODULE_INIT(InitJoyStreamAddon) {
 }
 
 NODE_MODULE(JoyStreamAddon, InitJoyStreamAddon)
+
+void redirectStdCLog () {
+  char* redirectToFile = NULL;
+
+  // get env variable
+  char* joystreamLog = getenv("JOYSTREAM_NODE_LOGS");
+
+  if (joystreamLog) {
+    redirectToFile = "joystream.log";
+  }
+
+  if (redirectToFile) {
+
+    // redirects std::clog to file in local working directory
+    auto logfile = new std::ofstream(redirectToFile);
+    std::clog.rdbuf(logfile->rdbuf());
+
+  } else {
+    // putting the stream in fail state will make it silently discard any output
+    std::clog.setstate(std::ios_base::failbit);
+  }
+}
