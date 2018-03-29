@@ -1,6 +1,6 @@
 {
   "name": "joystream-node",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "JoyStream payment protocol over BitTorrent",
   "keywords": [
     "libtorrent",

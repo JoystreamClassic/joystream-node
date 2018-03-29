@@ -10,7 +10,7 @@ class JoyStreamNode(ConanFile):
                 "ProtocolWire/0.1.2@joystream/stable",
                 "ProtocolStateMachine/0.3.0@joystream/stable",
                 "ProtocolSession/0.3.0@joystream/stable",
-                "Extension/0.3.0@joystream/stable",
+                "Extension/0.3.1@joystream/stable",
                 "Boost/1.60.0@joystream/stable",
                 "OpenSSL/1.0.2j@lasote/stable")
 
