@@ -3,7 +3,7 @@ from conans import ConanFile
 class JoyStreamNode(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     requires = ("Libtorrent/1.1.1@joystream/stable",
-                "LibtorrentNode/0.0.6@joystream/stable",
+                "LibtorrentNode/0.0.7@joystream/stable",
                 "CoinCore/0.2.0@joystream/stable",
                 "Common/0.2.0@joystream/stable",
                 "PaymentChannel/0.2.0@joystream/stable",

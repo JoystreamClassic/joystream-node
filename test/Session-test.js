@@ -33,7 +33,9 @@ describe('Session', function () {
 
   before(function () {
     session = new lib.Session({
-      port: 6881,
+      libtorrent_settings: {
+        listen_interfaces: '127.0.0.1:6881'
+      },
       network: 'testnet3'
     })
   })
