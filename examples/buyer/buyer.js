@@ -12,7 +12,22 @@ const torrentPath = path.join(__dirname, '/../../test/sfc.torrent')
 const sintelTorrentPath = path.join(__dirname, '/../../test/sintel.torrent')
 
 var buyerSession = new Session({
-  port: 6881
+  libtorrent_settings: {
+    listen_interfaces: '0.0.0.0:6881',
+    enable_lsd: true,
+    peer_fingerprint: {
+      name: 'JS',
+      major: 1,
+      minor: 0,
+      revision: 5,
+      tag: 0
+    }
+  },
+  network: 'mainnet_bitcoin_cash'
+})
+
+buyerSession.on('alert', function(alert){
+  console.log(alert)
 })
 
 let addTorrentParamsBuyer = {

@@ -23,7 +23,7 @@ namespace connection {
   typedef std::pair<std::type_index, const char *> TypeInfo;
   #define STATE_TO_TYPE_INFO(name) (std::make_pair(std::type_index(typeid(protocol_statemachine::name)), #name))
 
-  static const std::array<TypeInfo, 10> InnerStateTypeInfo = {
+  static const std::array<TypeInfo, 12> InnerStateTypeInfo = {
 
       // Initial picker state, in practice we should never be here given
       // current behaviour of plugin
@@ -34,6 +34,7 @@ namespace connection {
 
       // * Selling
       STATE_TO_TYPE_INFO(ReadyForInvitation),
+      STATE_TO_TYPE_INFO(ReadyToSendTestPayload),
       STATE_TO_TYPE_INFO(Invited),
       // (active selling state)
       STATE_TO_TYPE_INFO(WaitingToStart),
@@ -42,6 +43,7 @@ namespace connection {
 
       // * Buying
       STATE_TO_TYPE_INFO(ReadyToInviteSeller),
+      STATE_TO_TYPE_INFO(TestingSellerSpeed),
       STATE_TO_TYPE_INFO(WaitingForSellerToJoin),
       // ** Seller has joined
       STATE_TO_TYPE_INFO(PreparingContract),
@@ -168,6 +170,7 @@ namespace connection {
     SET_VAL(o, "payor", encode(c.machine.payor));
     SET_VAL(o, "payee", encode(c.machine.payee));
     SET_VAL(o, "announcedModeAndTermsFromPeer", encode(c.machine.announcedModeAndTermsFromPeer));
+    SET_NUMBER(o, "latency", c.machine.latency);
 
     //std::queue<uint32_t> downloadedValidPieces;
 
