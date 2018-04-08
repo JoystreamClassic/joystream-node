@@ -4,7 +4,7 @@ var libtorrent = require('bindings')('JoyStreamAddon').libtorrent
 
 // Sanity check - ensure we are linking with expected core libraries
 const linked = joystream.protocolVersion
-const expected = 3
+const expected = 4
 if (linked !== expected) {
   throw Error('Wrong Protocol Version linked. expected=v' + expected + ', linked=v' + linked)
 }
@@ -30,6 +30,10 @@ module.exports = {
 
   // Torrent State
   TorrentState: libtorrent.TorrentState,
+
+  // Alerts
+  LibtorrentAlertType: libtorrent.AlertType,
+  LibtorrentAlertNotification: libtorrent.AlertNotification,
 
   // Classes
   TorrentInfo: libtorrent.TorrentInfo,
