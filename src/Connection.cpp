@@ -170,7 +170,10 @@ namespace connection {
     SET_VAL(o, "payor", encode(c.machine.payor));
     SET_VAL(o, "payee", encode(c.machine.payee));
     SET_VAL(o, "announcedModeAndTermsFromPeer", encode(c.machine.announcedModeAndTermsFromPeer));
-    SET_NUMBER(o, "latency", c.machine.latency);
+
+    if(c.machine.latency) {
+      SET_NUMBER(o, "latency", (*c.machine.latency).count());
+    }
 
     //std::queue<uint32_t> downloadedValidPieces;
 
