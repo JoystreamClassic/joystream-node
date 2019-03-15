@@ -2,10 +2,10 @@
 
 [![npm package](https://nodei.co/npm/joystream-node.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/joystream-node/)
 
-`joystream-node` is the core javascript library for the JoyStream payment protocol over BitTorrent.
+`joystream-node` is the core javascript library for the JoyStreamClassic payment protocol over BitTorrent.
 
 ```
-conan remote add joystream https://api.bintray.com/conan/joystream/joystream True
+conan remote add joystreamclassic https://api.bintray.com/conan/joystreamclassic/main True
 
 npm install joystream-node
 ```
@@ -24,9 +24,9 @@ Follow [instruction in node-gyp readme](https://github.com/nodejs/node-gyp) for 
 
 The module depends on multiple c++ packages which will be fetched and built using conan.
 
-After installing conan add the JoyStream conan repository:
+After installing conan add the JoyStreamClassic conan repository:
 ```
-conan remote add joystream https://api.bintray.com/conan/joystream/joystream True
+conan remote add joystreamclassic https://api.bintray.com/conan/joystreamclassic/main True
 ```
 
 If building on windows install npm v4.6.1 (build fails with newer versions of npm)

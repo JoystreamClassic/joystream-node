@@ -42,7 +42,7 @@ before_install:
     else
       pip install --user "conan==0.28.1";
     fi
-  - conan remote add joystream https://api.bintray.com/conan/joystream/joystream True
+  - conan remote add joystreamclassic https://api.bintray.com/conan/joystreamclassic/main True
 
 install:
 

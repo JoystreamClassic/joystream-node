@@ -15,7 +15,7 @@ install:
   - npm install -g npm@4.6.1
   - npm config set loglevel warn
   - pip install "conan==0.28.1"
-  - conan remote add joystream https://api.bintray.com/conan/joystream/joystream True
+  - conan remote add joystreamclassic https://api.bintray.com/conan/joystreamclassic/main True
 
 build_script:
   - npm install
